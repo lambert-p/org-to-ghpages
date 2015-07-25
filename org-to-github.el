@@ -109,5 +109,55 @@ permalink:
 (defun org-github-section (section contents info)
   contents)
 
+(defun org-github-italic (text contents info)
+  (format "*%s*" contents))
+
+(defun org-github-bold (text contents info)
+  (format "**%s**" contents))
+
+(defun is-empty (s)
+  (string= s ""))
+
+(defun drop-while (f list)
+  (cond ((null list) nil)
+        ((funcall f (car list)) (drop-while f (cdr list)))
+        (t list)))
+
+(defun take-while (f list)
+  (cond ((null list) nil)
+        ((funcall f (car list)) (cons (car list)
+                                      (take-while f (cdr list))))
+        (t nil)))
+
+(defun complement (f)
+  (lexical-let ((f f))
+    (lambda (&rest args)
+      (not (apply f args)))))
+
+(defun string-join (xs y)
+  (mapconcat #'identity xs y))
+
+(defun trim-empty-lines (s)
+  (let ((lines (split-string s "\n")))
+    (string-join
+     (reverse (drop-while #'is-empty
+                          (reverse (drop-while #'is-empty lines)))) "\n")))
+
+(defun org-github-fixed-width (fixed-width contents info)
+  (concat "```\n"
+          (trim-empty-lines (org-element-property :value fixed-width))
+          "\n```\n"))
+
+(defun org-github-export-as-github
+    (&optional async subtreep visible-only body-only ext-plist)
+  (interactive)
+  (if async
+      (org-export-async-start
+          (lambda (output)
+            (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
+              (erase-buffer)
+              (insert output)
+              (goto-char (point-min))
+              (org-export-add-to-stack (current-buffer) 'github-pages)))
 
 
