@@ -1,10 +1,10 @@
 (save-excursion
   ;; map over all task entries
   (let ((dev-file (expand-file-name
-                   "development.org"
+                   "blog.org"
                    (file-name-directory (buffer-file-name))))
         (posts-dir (expand-file-name
-                    "_posts"
+                    "~/code/lambertington.github.io/_posts/"
                     (file-name-directory (buffer-file-name))))
         (yaml-front-matter '(("layout" . "default"))))
     ;; go through both the tasks and the bugs
