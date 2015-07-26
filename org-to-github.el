@@ -167,7 +167,7 @@ permalink:
         (switch-to-buffer-other-window outbuf)))))
 
 (defun org-github-publish-to-github-pages (plist filename pub-dir)
-  (org-publish-org to 'github-pages filename ".md" plist pub-dir))
+  (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
 
 (defun new-post (dir title)
   (interactive "Mdirectory: \nMtitle: ")
