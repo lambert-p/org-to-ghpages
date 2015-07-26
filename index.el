@@ -1,5 +1,5 @@
 ;;;; originally taken from:
-;;;; https://github.com/eschulte/babel-dev/blob/73bfff55769675bffd90478cbd652363c730952c/publish.org
+;;;; http://eschulte.github.io/babel-dev/publish.html
 ;;;;
 ;;;; all further modifications were made by Paul Lambert <lambertington@gmail.com>
 

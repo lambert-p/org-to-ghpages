@@ -1,12 +1,12 @@
 ;;;; originally taken from:
-;;;; https://github.com/eschulte/babel-dev/blob/73bfff55769675bffd90478cbd652363c730952c/publish.org
+;;;; http://eschulte.github.io/babel-dev/publish.html
 ;;;;
 ;;;; all further modifications were made by Paul Lambert <lambertington@gmail.com>
 
 (save-excursion
   ;; map over all tasks entries
   (let ((dev-file (expand-file-name
-                   "blog.org"
+                   "~/org/blog.org"
                    (file-name-directory (buffer-file-name))))
         (posts-dir (expand-file-name
                     "~/code/lambertington.github.io/_posts"
