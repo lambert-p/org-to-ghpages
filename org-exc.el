@@ -1,13 +1,18 @@
+;;;; originally taken from:
+;;;; https://github.com/eschulte/babel-dev/blob/73bfff55769675bffd90478cbd652363c730952c/publish.org
+;;;;
+;;;; all further modifications were made by Paul Lambert <lambertington@gmail.com>
+
 (save-excursion
-  ;; map over all task entries
+  ;; map over all tasks entries
   (let ((dev-file (expand-file-name
                    "blog.org"
                    (file-name-directory (buffer-file-name))))
         (posts-dir (expand-file-name
-                    "~/code/lambertington.github.io/_posts/"
+                    "~/code/lambertington.github.io/_posts"
                     (file-name-directory (buffer-file-name))))
         (yaml-front-matter '(("layout" . "default"))))
-    ;; go through both the tasks and the bugs
+    ;; go through both the tasks and bugs
     (mapc
      (lambda (top-level)
        (find-file dev-file)
@@ -18,7 +23,8 @@
           (let* ((props (org-entry-properties))
                  (todo (cdr (assoc "TODO" props)))
                  (time (cdr (assoc "TIMESTAMP_IA" props))))
-            ;; each task with a state and timestamp can be exported as a jekyll blog post
+            ;; each task with a state and timestamp can be exported as a
+            ;; jekyll blog post
             (when (and todo time)
               (message "time=%s" time)
               (let* ((heading (org-get-heading))
@@ -43,7 +49,4 @@
                     (insert "---\n\n"))
                   (insert html))
                 (get-buffer org-buffer)))))))
-     '(1 2))))
-                    
-                       
-                                    
+     '(1 2))))                                   
