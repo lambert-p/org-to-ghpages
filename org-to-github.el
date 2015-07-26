@@ -159,5 +159,37 @@ permalink:
               (insert output)
               (goto-char (point-min))
               (org-export-add-to-stack (current-buffer) 'github-pages)))
+          `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
+    (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
+                    subtreep visible-only body-only ext-plist)))
+      (with-current-buffer outbuf (LaTeX-mode))
+      (when org-export-show-temporary-export-buffer
+        (switch-to-buffer-other-window outbuf)))))
+
+(defun org-github-publish-to-github-pages (plist filename pub-dir)
+  (org-publish-org to 'github-pages filename ".md" plist pub-dir))
+
+(defun new-post (dir title)
+  (interactive "Mdirectory: \nMtitle: ")
+  (let* ((date (format-time-string "%Y-%m-%d"))
+         (title-no-spaces (replace-regexp-in-string " +" "-" title))
+         (dirname (file-name-as-directory dir))
+         (filename (format (concat dirname "%s-%s.org") date title-no-spaces)))
+    (find-file filename)
+    (rename-buffer title)
+    (org-insert-export-options-template)
+    (rename-buffer filename)))
+
+(defun make-org-publish-project-alist
+    (name blog-root github-pages-root)
+  (let ((github-posts (concat (file-name-as-directory github-pages-root)
+                              "_posts")))
+    `(("posts"
+       :base-directory ,blog-root
+       :base-extension "org"
+       :publishing-directory ,github-posts
+       :publishing-function org-github-publish-to-github-pages)
+      (,name :components ("posts")))))
+       
 
 
