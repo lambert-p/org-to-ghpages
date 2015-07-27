@@ -59,6 +59,7 @@
             "windows" "xml" "xslt" "yaml")))
 
 (org-export-define-derived-backend 'ghpages 'md
+  :export-block '("MD" "GHPAGES")
   :translate-alist
   '((src-block . org-ghpages-src-block)
     (template . org-ghpages-template)
@@ -94,10 +95,11 @@
 
 (defun org-ghpages-template (contents info)
   "return the complete document after markdown conversion"
-  (message "%S" (org-ghpages-yaml-front-matter info))
+  (message "%s" yaml)
   (if org-ghpages-include-yaml-front-matter
-      (concat (org-ghpages-yaml-front-matter info)
-              contents)
+      ;; (concat (org-ghpages-yaml-front-matter info)
+      ;;         contents)
+      (concat yaml contents)
     contents))
 
 (defun org-ghpages-inner-template (contents info)
@@ -131,14 +133,6 @@
    "\npermalink: \"" permalink
    "\"\n---\n"))
 
-(defun org-ghpages-prepare-input-buffer (header content reference-buffer)
-  "Insert content and clean it up a bit"
-  (insert header content)
-  (goto-char (point-min))
-  (org-mode)
-  (outline-next-heading)
-  )
-
 (defun org-ghpages-export-subtree-as-md
     (&optional async visible-only body-only ext-plist)
   "export current subtree to a HTML buffer adding the YAML front-matter"
@@ -155,16 +149,30 @@
               (erase-buffer)
               (insert output)
               (goto-char (point-min))
-              (funcall org-html-display-buffer-mode);AHH WTF
               (org-export-add-to-stack (current-buffer) 'ghpages)))
         (org-export-as 'ghpages ,subtreep ,visible-only, body-only ',ext-plist))
     (let ((outbuf (org-export-to-buffer
-                      'ghpages "*Org GitHubPages MD Export*"
+                      'ghpages "*Org GitHub Pages MD Export*"
                     nil subtreep visible-only body-only ext-plist)))
       (with-current-buffer outbuf (set-auto-mode t))
       (if org-export-show-temporary-export-buffer
           (switch-to-buffer-other-window outbuf)
         outbuf))))
+
+(defun org-ghpages-export-to-html
+    (&optional async subtreep visible-only body-only ext-plist)
+  "export current buffer to a HTML file with YAML front-matter"
+  (interactive)
+  (let* ((extension ".md")
+         (file (org-export-output-file-name extension subtreep)))
+    (if async
+        (org-export-async-start
+            (lambda (f) (org-export-add-to-stack f 'ghpages))
+          (let (expand-file-name
+                (org-export-to-file
+                    'ghpages ,file ,subtreep ,visible-only ,body-only ',ext-plist))))
+      (let (org-export-to-file
+               'ghpages file nil subtreep visible-only body-only ext-plist)))))
 
 (defun org-ghpages-export ()
   "export this current subtree to our blog as a GitHub Pages compliant markdown post
@@ -184,12 +192,17 @@ with YAML front-matter"
               (buffer-string)))
            (reference-buffer (current-buffer)))
       (setq yaml (org-ghpages-yaml-front-matter-helper title date tags permalink))
+      (setq body subtree-content)
       ;; (message "%S" yaml)
       ;; (message "%S" subtree-content)
       (with-temp-buffer
-        (org-ghpages-prepare-input-buffer yaml subtree-content reference-buffer)
-        (org-ghpages-export-as-md nil t nil nil)
-        (with-current-buffer "*Org GitHub Pages to md Export*"
+        (insert yaml body)
+        (goto-char (point-min))
+        (org-mode)
+        (outline-next-heading)
+        (org-ghpages-export-as-md nil t nil nil nil)
+        ;; (org-md-export-as-markdown nil t nil) ; KIND OF WORKS
+        (with-current-buffer "*Org GitHub Pages MD Export*"
           (goto-char (point-min))))
       )
     )
