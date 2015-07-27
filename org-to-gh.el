@@ -102,6 +102,17 @@
 (defun org-ghpages-normalize-string (str)
   (downcase (replace-regexp-in-string " " "-" str)))
 
+(defun org-ghpages-yaml-front-matter (title date tags permalink)
+  (concat
+   "---"
+   "\nlayout: post"
+   "\ntitle: \"" title
+   "\"\ndate: " date
+   "\ncomments: true"
+   "\ntags: " tags
+   "\npermalink: \"" permalink
+   "\"\n---\n"))
+
 (defun org-ghpages-export ()
   "export this current subtree to our blog as a GitHub Pages compliant markdown post
 with YAML front-matter"
@@ -111,13 +122,11 @@ with YAML front-matter"
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
     (let* ((date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
-           (tags (org-get-tags-at))
+           (tags (mapconcat 'identity (org-get-tags-at) " "))
            (title (org-get-heading t t))
-           (permalink (org-ghpages-normalize-string title)))
-      (message "date is: %S" date)
-      (message "tags are: %S" tags)
-      (message "title is: %s" title)
-      (message "permalink is: %S" permalink))))
+           (permalink (org-ghpages-normalize-string title))
+           (yaml (org-ghpages-yaml-front-matter title date tags permalink)))
+      (message "yaml is: %s" yaml))))
     
   
 
