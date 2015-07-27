@@ -1,4 +1,5 @@
 (require 'ox)
+(require 'ox-md)
 
 (defgroup org-export-ghpages nil
   "Options for exporting org-mode files to Github Pages Markdown"
@@ -35,8 +36,11 @@
   :group 'org-export-ghpages-use-src-plugin
   :type 'boolean)
 
+(defun org-ghpages-normalize-string (str)
+  (downcase (replace-regexp-in-string " " "-" str)))
+
 (defvar *org-ghpages-pygments-langs*
-  (mapcar #'orgh:normalize-string
+  (mapcar #'org-ghpages-normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
             "befunge" "boo" "brainfuck" "c, c++" "c#" "clojure" "coffeescript"
             "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
@@ -66,7 +70,7 @@
 
 (defun get-lang (lang)
   (and lang
-       (let ((lang (orgh:normalize-string lang)))
+       (let ((lang (org-ghpages-normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
                ((not (member lang *org-ghpages-pygments-langs*)) nil)
                (t lang)))))
@@ -90,6 +94,7 @@
 
 (defun org-ghpages-template (contents info)
   "return the complete document after markdown conversion"
+  (message "%S" (org-ghpages-yaml-front-matter info))
   (if org-ghpages-include-yaml-front-matter
       (concat (org-ghpages-yaml-front-matter info)
               contents)
@@ -99,10 +104,23 @@
   "return the body of the document after markdown conversion"
   (org-md-export-as-markdown contents))
 
-(defun org-ghpages-normalize-string (str)
-  (downcase (replace-regexp-in-string " " "-" str)))
+;;; YAML Front Matter
+(defun org-ghpages-get-option (info property-name &optional default)
+  (let ((property (org-export-data (plist-get info property-name) info)))
+    (format "%s" (or property default ""))))
 
-(defun org-ghpages-yaml-front-matter (title date tags permalink)
+(defun org-ghpages-yaml-front-matter (info)
+  (let ((title
+         (org-ghpages-get-option info :title))
+        (date
+         (org-ghpages-get-option info :date))
+        (layout
+         (org-ghpages-get-option info :ghpages-layout org-ghpages-layout))
+        (categories
+         (org-ghpages-get-option info :ghpages-categories org-ghpages-categories)))
+    (org-ghpages-yaml-front-matter-helper title date categories title)))
+
+(defun org-ghpages-yaml-front-matter-helper (title date tags permalink)
   (concat
    "---"
    "\nlayout: post"
@@ -112,6 +130,14 @@
    "\ntags: " tags
    "\npermalink: \"" permalink
    "\"\n---\n"))
+
+(defun org-ghpages-prepare-input-buffer (header content reference-buffer)
+  "Insert content and clean it up a bit"
+  (insert header content)
+  (goto-char (point-min))
+  (org-mode)
+  (outline-next-heading)
+  )
 
 (defun org-ghpages-export-subtree-as-md
     (&optional async visible-only body-only ext-plist)
@@ -157,9 +183,14 @@ with YAML front-matter"
               (org-narrow-to-subtree)
               (buffer-string)))
            (reference-buffer (current-buffer)))
-      (setq yaml (org-ghpages-yaml-front-matter title date tags permalink))
-      (message "%S" yaml)
-      (message "%S" subtree-content)
+      (setq yaml (org-ghpages-yaml-front-matter-helper title date tags permalink))
+      ;; (message "%S" yaml)
+      ;; (message "%S" subtree-content)
+      (with-temp-buffer
+        (org-ghpages-prepare-input-buffer yaml subtree-content reference-buffer)
+        (org-ghpages-export-as-md nil t nil nil)
+        (with-current-buffer "*Org GitHub Pages to md Export*"
+          (goto-char (point-min))))
       )
     )
   )
