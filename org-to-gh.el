@@ -124,10 +124,18 @@ with YAML front-matter"
     (let* ((date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
            (tags (mapconcat 'identity (org-get-tags-at) " "))
            (title (org-get-heading t t))
-           (permalink (org-ghpages-normalize-string title)))
+           (permalink (org-ghpages-normalize-string title))
+           (subtree-content
+            (save-restriction
+              (org-narrow-to-subtree)
+              (buffer-string)))
+           (reference-buffer (current-buffer)))
       (setq yaml (org-ghpages-yaml-front-matter title date tags permalink))
-      ;;(org-todo 'done)
-      )))
+      (message "%S" yaml)
+      (message "%S" subtree-content)
+      )
+    )
+  )
     
 ;; (defun org-ghpages-export-subtree-as-md
 ;;     (&optional async visible-only body-only ext-plist)
