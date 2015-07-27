@@ -5,26 +5,27 @@
 
 (defvar *org-github-yaml-front-matter* t)
 
-(defun orgh:normalize-lang (str)
+(defun orgh:normalize-string (str)
   (downcase (replace-regexp-in-string " " "-" str)))
 
 (defvar *org-github-pygments-langs*
-  (mapcar #'orgh:normalize-lang
-          '("SML" "ActionScript" "Ada" "ANTLR" "AppleScript"
-            "Assembly" "Asymptote" "Awk" "Befunge" "Boo"
-            "BrainFuck" "C" "C++" "C#" "Clojure" "CoffeeScript"
-            "ColdFusion" "Common Lisp" "Coq" "Cython" "D"
-            "Dart" "Delphi" "Dylan" "Erlang" "Factor" "Fancy"
-            "Fortran" "F#" "Gherkin" "GL shaders" "Groovy"
-            "Haskell" "IDL" "Io" "Java" "JavaScript" "LLVM"
-            "Logtalk" "Lua" "Matlab" "MiniD" "Modelica"
-            "Modula-2" "MuPad" "Nemerle" "Nimrod" "Objective-C"
-            "Objective-J" "Octave" "OCaml" "PHP" "Perl" "PovRay"
-            "PostScript" "PowerShell" "Prolog" "Python" "Rebol"
-            "Redcode" "Ruby" "Rust" "S" "S-Plus" "R" "Scala"
-            "Scheme" "Scilab" "Smalltalk" "SNOBOL" "Tcl"
-            "Vala" "Verilog" "VHDL" "Visual Basic.NET"
-            "Visual FoxPro" "XQuery")))
+  (mapcar #'orgh:normalize-string
+          '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
+            "befunge" "boo" "brainfuck" "c, c++" "c#" "clojure" "coffeescript"
+            "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
+            "dylan" "erlang" "factor" "fancy" "fortran" "f#" "gap" "gherkin" "gl shaders"
+            "groovy" "haskell" "idl" "io" "java" "javascript" "lasso" "llvm" "logtalk"
+            "lua" "matlab" "minid" "modelica" "modula-2" "mupad" "nemerle" "nimrod"
+            "objective-c" "objective-j" "octave" "ocaml" "php" "perl" "povray"
+            "postscript" "powershell" "prolog" "python" "rebol" "red" "redcode"
+            "ruby" "rust" "s" "s-plus" "r" "scala" "scheme" "scilab" "smalltalk"
+            "snobol" "tcl" "vala" "verilog" "vhdl" "visual basic.net" "visual foxpro"
+            "xquery" "zephir" "cheetah" "django" "jinja" "erb" "genshi" "jsp" "myghty"
+            "mako" "smarty" "tea" "apache" "bash" "bbcode" "cmake" "css" "debian" "diff"
+            "dtd" "gettext" "gnuplot" "groff" "html" "http" "ini" "irc" "lighttpd"
+            "makefile" "moinmoin" "mysql" "nginx" "pov-ray" "ragel" "redcode" "rest"
+            "robot" "rpm" "sql" "trac" "mysql" "sqlite" "squid" "tex" "tcsh" "vimscript"
+            "windows" "xml" "xslt" "yaml")))
 
 (org-export-define-backend 'github-pages
   '(
@@ -43,24 +44,25 @@
 returns the final string with YAML frontmatter prepended"
   (let ((title (plist-get info :title))
         (date (car (plist-get info :date)))
-        (time "")
+        (tags (car (plist-get info :categories)))
+        (permalink (orgh:normalize-string (plist-get info :title)))
         (frontmatter
          "---
 layout: post
 title: %s
-date: %s %s
+date: %s 
 comments: true
-categories:
-permalink:
+categories: %s
+permalink: %s
 ---
 "))
     (if *org-github-yaml-front-matter*
-        (concat (format frontmatter title date time) contents)
+        (concat (format frontmatter title date tags permalink) contents)
       contents)))
 
 (defun get-lang (lang)
   (and lang
-       (let ((lang (orgh:normalize-lang lang)))
+       (let ((lang (orgh:normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
                ((not (member lang *org-github-pygments-langs*)) nil)
                (t lang)))))
@@ -69,15 +71,11 @@ permalink:
   "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
   (let* ((lang (get-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
-         (name (org-element-property :name src-block))
-         (header
-          ;; backtick code blocks support lang or lang and name, but not name alone
-          (cond ((and lang name)
-                 (concat "```" lang " " name "\n"))
-                (lang
-                 (concat "```" lang "\n"))
-                (t "{% codeblock %}\n")))
-         (footer (if lang "```\n" "{% endcodeblock %}")))
+         ;; (name (org-element-property :name src-block))
+         (header (if lang
+                     (concat "{% highlight " lang " %}\n")
+                   "```\n"))
+         (footer (if lang "{% endhighlight %}" "```\n")))
     (concat
      header
      value
@@ -151,7 +149,10 @@ permalink:
 (defun org-github-export-as-github
     (&optional async subtreep visible-only body-only ext-plist)
   (interactive)
-  (if async
+  (let* ((extension ".md")
+         (file (org-export-output-file-name extension subtreep))
+         (org-export-coding-system org-md-coding-system))
+    (if async
       (org-export-async-start
           (lambda (output)
             (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
@@ -159,26 +160,16 @@ permalink:
               (insert output)
               (goto-char (point-min))
               (org-export-add-to-stack (current-buffer) 'github-pages)))
-          `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
-    (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
-                    subtreep visible-only body-only ext-plist)))
-      (with-current-buffer outbuf (LaTeX-mode))
+        `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
+      (let ((outbuf (org-export-to-buffer 'github-pages
+                        "*Org Github Pages Export*"
+                      nil subtreep visible-only body-only ext-plist)))
+      (with-current-buffer outbuf (set-auto-mode t))
       (when org-export-show-temporary-export-buffer
         (switch-to-buffer-other-window outbuf)))))
 
 (defun org-github-publish-to-github-pages (plist filename pub-dir)
   (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
-
-(defun new-post (dir title)
-  (interactive "Mdirectory: \nMtitle: ")
-  (let* ((date (format-time-string "%Y-%m-%d"))
-         (title-no-spaces (replace-regexp-in-string " +" "-" title))
-         (dirname (file-name-as-directory dir))
-         (filename (format (concat dirname "%s-%s.org") date title-no-spaces)))
-    (find-file filename)
-    (rename-buffer title)
-    (org-insert-export-options-template)
-    (rename-buffer filename)))
 
 (defun make-org-publish-project-alist
     (name blog-root github-pages-root)
@@ -190,6 +181,6 @@ permalink:
        :publishing-directory ,github-posts
        :publishing-function org-github-publish-to-github-pages)
       (,name :components ("posts")))))
-       
+
 
 
