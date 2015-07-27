@@ -110,10 +110,14 @@ with YAML front-matter"
     ;; find our first TODO state
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
-    (let* ((date (org-get-scheduled-time (point) nil))
+    (let* ((date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
            (tags (org-get-tags-at))
-           (title (org-get-heading t t)))
-      
+           (title (org-get-heading t t))
+           (permalink (org-ghpages-normalize-string title)))
+      (message "date is: %S" date)
+      (message "tags are: %S" tags)
+      (message "title is: %s" title)
+      (message "permalink is: %S" permalink))))
     
   
 
