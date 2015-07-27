@@ -124,9 +124,34 @@ with YAML front-matter"
     (let* ((date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
            (tags (mapconcat 'identity (org-get-tags-at) " "))
            (title (org-get-heading t t))
-           (permalink (org-ghpages-normalize-string title))
-           (yaml (org-ghpages-yaml-front-matter title date tags permalink)))
-      (message "yaml is: %s" yaml))))
+           (permalink (org-ghpages-normalize-string title)))
+      (setq yaml (org-ghpages-yaml-front-matter title date tags permalink))
+      ;;(org-todo 'done)
+      )))
     
-  
-
+;; (defun org-ghpages-export-subtree-as-md
+;;     (&optional async visible-only body-only ext-plist)
+;;   "export current subtree to a HTML buffer adding the YAML front-matter"
+;;   (interactive))
+;; 
+;; (defun org-ghpages-export-as-md
+;;     (&optional async subtreep visible-only body-only ext-plist)
+;;   "export current buffer to a HTML buffer adding the YAML front-matter"
+;;   (interactive)
+;;   (if async
+;;       (org-export-async-start
+;;           (lambda (output)
+;;             (with-current-buffer (get-buffer-create "*Org GitHub Pages MD Export*")
+;;               (erase-buffer)
+;;               (insert output)
+;;               (goto-char (point-min))
+;;               (funcall org-html-display-buffer-mode);AHH WTF
+;;               (org-export-add-to-stack (current-buffer) 'ghpages)))
+;;         (org-export-as 'ghpages ,subtreep ,visible-only, body-only ',ext-plist))
+;;     (let ((outbuf (org-export-to-buffer
+;;                       'ghpages "*Org GitHubPages MD Export*"
+;;                     nil subtreep visible-only body-only ext-plist)))
+;;       (with-current-buffer outbuf (set-auto-mode t))
+;;       (if org-export-show-temporary-export-buffer
+;;           (switch-to-buffer-other-window outbuf)
+;;         outbuf))))
