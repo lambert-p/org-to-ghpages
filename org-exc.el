@@ -39,7 +39,7 @@
                      (yaml-front-matter (cons (cons "title" heading) yaml-front-matter))
                      html)
                 (org-narrow-to-subtree)
-                (setq html (org-export-as-html nil nil nil 'string t nil))
+                (setq html (org-html-export-as-html nil nil nil t nil))
                 (set-buffer org-buffer) (widen)
                 (with-temp-file (expand-file-name to-file posts-dir)
                   (when yaml-front-matter

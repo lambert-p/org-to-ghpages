@@ -5,11 +5,11 @@
 
 (defvar *org-github-yaml-front-matter* t)
 
-(defun orgh:normalize-lang (str)
+(defun orgh:normalize-string (str)
   (downcase (replace-regexp-in-string " " "-" str)))
 
 (defvar *org-github-pygments-langs*
-  (mapcar #'orgh:normalize-lang
+  (mapcar #'orgh:normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
             "befunge" "boo" "brainfuck" "c, c++" "c#" "clojure" "coffeescript"
             "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
@@ -44,24 +44,25 @@
 returns the final string with YAML frontmatter prepended"
   (let ((title (plist-get info :title))
         (date (car (plist-get info :date)))
-        (time "")
+        (tags (car (plist-get info :categories)))
+        (permalink (orgh:normalize-string (plist-get info :title)))
         (frontmatter
          "---
 layout: post
 title: %s
-date: %s %s
+date: %s 
 comments: true
-categories:
-permalink:
+categories: %s
+permalink: %s
 ---
 "))
     (if *org-github-yaml-front-matter*
-        (concat (format frontmatter title date time) contents)
+        (concat (format frontmatter title date tags permalink) contents)
       contents)))
 
 (defun get-lang (lang)
   (and lang
-       (let ((lang (orgh:normalize-lang lang)))
+       (let ((lang (orgh:normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
                ((not (member lang *org-github-pygments-langs*)) nil)
                (t lang)))))
@@ -148,7 +149,10 @@ permalink:
 (defun org-github-export-as-github
     (&optional async subtreep visible-only body-only ext-plist)
   (interactive)
-  (if async
+  (let* ((extension ".md")
+         (file (org-export-output-file-name extension subtreep))
+         (org-export-coding-system org-md-coding-system))
+    (if async
       (org-export-async-start
           (lambda (output)
             (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
@@ -156,26 +160,16 @@ permalink:
               (insert output)
               (goto-char (point-min))
               (org-export-add-to-stack (current-buffer) 'github-pages)))
-          `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
-    (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
-                    subtreep visible-only body-only ext-plist)))
-      (with-current-buffer outbuf (LaTeX-mode))
+        `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
+      (let ((outbuf (org-export-to-buffer 'github-pages
+                        "*Org Github Pages Export*"
+                      nil subtreep visible-only body-only ext-plist)))
+      (with-current-buffer outbuf (set-auto-mode t))
       (when org-export-show-temporary-export-buffer
         (switch-to-buffer-other-window outbuf)))))
 
 (defun org-github-publish-to-github-pages (plist filename pub-dir)
   (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
-
-;; (defun new-post (dir title)
-;;   (interactive "Mdirectory: \nMtitle: ")
-;;   (let* ((date (format-time-string "%Y-%m-%d"))
-;;          (title-no-spaces (replace-regexp-in-string " +" "-" title))
-;;          (dirname (file-name-as-directory dir))
-;;          (filename (format (concat dirname "%s-%s.org") date title-no-spaces)))
-;;     (find-file filename)
-;;     (rename-buffer title)
-;;     (org-insert-export-options-template)
-;;     (rename-buffer filename)))
 
 (defun make-org-publish-project-alist
     (name blog-root github-pages-root)
