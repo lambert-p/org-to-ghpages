@@ -31,25 +31,13 @@
 (org-export-define-derived-backend 'github-pages 'md
   :export-block '("MD" "GITHUB")
   :translate-alist
-  '(
-    ;; (bold . org-github-bold)
-    ;; (fixed-width . org-github-fixed-width)
-    ;; (headline . org-github-headline)
-    ;; (italic . org-github-italic)
-    ;; (link . org-github-link)
-    ;; (paragraph . org-github-paragraph)
-    ;; (section . org-github-section)
-    (src-block . org-github-src-block)
+  '((src-block . org-github-src-block)
     (template . org-github-template)))
 
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
 returns the final string with YAML frontmatter prepended"
-  (let (;; (title (plist-get info :title))
-        ;; (date (car (plist-get info :date)))
-        ;; (tags (car (plist-get info :categories)))
-        ;; (permalink (orgh:normalize-string (plist-get info :title)))
-        (frontmatter
+  (let ((frontmatter
          "---
 layout: post
 title: %s
@@ -86,71 +74,6 @@ permalink: %s
      footer
      contents)))
 
-(defun repeat (x n)
-  (let (acc)
-    (dotimes (_ n acc)
-      (push x acc))))
-
-(defun org-github-headline (headline contents info)
-  "Parse our headline from the given data, and prepend the necessary number of #s"
-  (let ((value (org-element-property :raw-value headline))
-        (level (org-element-property :level headline)))
-    (concat (apply 'concat (repeat "#" level))
-            " "
-            value
-            "\n"
-            contents)))
-
-(defun org-github-link (link contents info)
-  (let ((path (org-element-property :raw-link link)))
-    (format "[%s](%s)" contents path)))
-
-(defun org-github-paragraph (paragraph contents info)
-  contents)
-
-(defun org-github-section (section contents info)
-  contents)
-
-(defun org-github-italic (text contents info)
-  (format "*%s*" contents))
-
-(defun org-github-bold (text contents info)
-  (format "**%s**" contents))
-
-(defun is-empty (s)
-  (string= s ""))
-
-(defun drop-while (f list)
-  (cond ((null list) nil)
-        ((funcall f (car list)) (drop-while f (cdr list)))
-        (t list)))
-
-(defun take-while (f list)
-  (cond ((null list) nil)
-        ((funcall f (car list)) (cons (car list)
-                                      (take-while f (cdr list))))
-        (t nil)))
-
-(defun complement (f)
-  (lexical-let ((f f))
-    (lambda (&rest args)
-      (not (apply f args)))))
-
-(defun string-join (xs y)
-  (mapconcat #'identity xs y))
-
-(defun trim-empty-lines (s)
-  (let ((lines (split-string s "\n")))
-    (string-join
-     (reverse (drop-while #'is-empty
-                          (reverse (drop-while #'is-empty lines)))) "\n")))
-
-(defun org-github-fixed-width (fixed-width contents info)
-  (concat "```\n"
-          (trim-empty-lines (org-element-property :value fixed-width))
-          "\n```\n"))
-
-
 (defun org-github-export-as-github
     (&optional async subtreep visible-only body-only ext-plist)
   (interactive)
@@ -164,7 +87,7 @@ permalink: %s
     (setq yaml-title (org-get-heading t t))
     (setq yaml-permalink (orgh:normalize-string yaml-title))
     (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
-      
+    
     (let* ((extension ".md")
            (subtreep
             (save-restriction
