@@ -160,9 +160,14 @@ permalink: %s
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
     (setq yaml-permalink (orgh:normalize-string yaml-title))
-
-    
+    (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
+      
     (let* ((extension ".md")
+           (subtreep
+            (save-restriction
+              (org-narrow-to-subtree)
+              (buffer-string)))
+           ;; (file (concat (yaml-date "-" yaml-permalink extension subtreep))))
            (file (org-export-output-file-name extension subtreep)))
       (if async
           (org-export-async-start
