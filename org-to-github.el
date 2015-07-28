@@ -42,10 +42,11 @@
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
 returns the final string with YAML frontmatter prepended"
-  (let ((title (plist-get info :title))
-        (date (car (plist-get info :date)))
-        (tags (car (plist-get info :categories)))
-        (permalink (orgh:normalize-string (plist-get info :title)))
+  (message "in org-github-template")
+  (let (;; (title (plist-get info :title))
+        ;; (date (car (plist-get info :date)))
+        ;; (tags (car (plist-get info :categories)))
+        ;; (permalink (orgh:normalize-string (plist-get info :title)))
         (frontmatter
          "---
 layout: post
@@ -57,7 +58,7 @@ permalink: %s
 ---
 "))
     (if *org-github-yaml-front-matter*
-        (concat (format frontmatter title date tags permalink) contents)
+        (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
       contents)))
 
 (defun get-lang (lang)
@@ -146,27 +147,38 @@ permalink: %s
           (trim-empty-lines (org-element-property :value fixed-width))
           "\n```\n"))
 
+
 (defun org-github-export-as-github
     (&optional async subtreep visible-only body-only ext-plist)
   (interactive)
-  (let* ((extension ".md")
-         (file (org-export-output-file-name extension subtreep))
-         (org-export-coding-system org-md-coding-system))
-    (if async
-      (org-export-async-start
-          (lambda (output)
-            (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
-              (erase-buffer)
-              (insert output)
-              (goto-char (point-min))
-              (org-export-add-to-stack (current-buffer) 'github-pages)))
-        `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
-      (let ((outbuf (org-export-to-buffer 'github-pages
-                        "*Org Github Pages Export*"
-                      nil subtreep visible-only body-only ext-plist)))
-      (with-current-buffer outbuf (set-auto-mode t))
-      (when org-export-show-temporary-export-buffer
-        (switch-to-buffer-other-window outbuf)))))
+  (save-excursion 
+    ;; find our first TODO state
+    (while (null (org-entry-get (point) "TODO" nil t))
+      (outline-up-heading 1 t))
+
+    (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
+    (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
+    (setq yaml-title (org-get-heading t t))
+    (setq yaml-permalink (orgh:normalize-string yaml-title))
+
+    
+    (let* ((extension ".md")
+           (file (org-export-output-file-name extension subtreep)))
+      (if async
+          (org-export-async-start
+              (lambda (output)
+                (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
+                  (erase-buffer)
+                  (insert output)
+                  (goto-char (point-min))
+                  (org-export-add-to-stack (current-buffer) 'github-pages)))
+            `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
+        (let ((outbuf (org-export-to-buffer 'github-pages
+                          "*Org Github Pages Export*"
+                        nil subtreep visible-only body-only ext-plist)))
+          (with-current-buffer outbuf (set-auto-mode t))
+          (when org-export-show-temporary-export-buffer
+            (switch-to-buffer-other-window outbuf)))))))
 
 (defun org-github-publish-to-github-pages (plist filename pub-dir)
   (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
