@@ -2,6 +2,7 @@
 ;;; Author: Paul Lambert <lambertington@gmail.com>
 
 (require 'ox)
+(require 'ox-md)
 
 (defvar *org-github-yaml-front-matter* t)
 
@@ -27,22 +28,23 @@
             "robot" "rpm" "sql" "trac" "mysql" "sqlite" "squid" "tex" "tcsh" "vimscript"
             "windows" "xml" "xslt" "yaml")))
 
-(org-export-define-backend 'github-pages
+(org-export-define-derived-backend 'github-pages 'md
+  :export-block '("MD" "GITHUB")
+  :translate-alist
   '(
-    (bold . org-github-bold)
-    (fixed-width . org-github-fixed-width)
-    (headline . org-github-headline)
-    (italic . org-github-italic)
-    (link . org-github-link)
-    (paragraph . org-github-paragraph)
-    (section . org-github-section)
+    ;; (bold . org-github-bold)
+    ;; (fixed-width . org-github-fixed-width)
+    ;; (headline . org-github-headline)
+    ;; (italic . org-github-italic)
+    ;; (link . org-github-link)
+    ;; (paragraph . org-github-paragraph)
+    ;; (section . org-github-section)
     (src-block . org-github-src-block)
     (template . org-github-template)))
 
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
 returns the final string with YAML frontmatter prepended"
-  (message "in org-github-template")
   (let (;; (title (plist-get info :title))
         ;; (date (car (plist-get info :date)))
         ;; (tags (car (plist-get info :categories)))
@@ -70,6 +72,7 @@ permalink: %s
 
 (defun org-github-src-block (src-block contents info)
   "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
+  (message "%S" src-block)
   (let* ((lang (get-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          ;; (name (org-element-property :name src-block))
