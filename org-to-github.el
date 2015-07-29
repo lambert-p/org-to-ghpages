@@ -93,7 +93,6 @@ permalink: %s
             (save-restriction
               (org-narrow-to-subtree)
               (buffer-string)))
-           ;; (file (concat (yaml-date "-" yaml-permalink extension subtreep))))
            (file (org-export-output-file-name extension subtreep)))
       (if async
           (org-export-async-start
