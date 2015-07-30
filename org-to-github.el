@@ -6,6 +6,42 @@
 
 (defvar *org-github-yaml-front-matter* t)
 
+;; custom user vars 
+(defgroup org-export-ghpages nil
+  "Options for exporting org-mode files to Github Pages Markdown"
+  :tag "Org Github Pages"
+  :group `org-export)
+
+(defcustom org-ghpages-post-dir (expand-file-name "~/code/lambertington.github.io/_posts")
+  "directory to save posts"
+  :group 'org-export-ghpages
+  :type 'directory)
+
+(defcustom org-ghpages-include-yaml-front-matter t
+  "automatically generate YAML front matter?"
+  :group 'org-export-ghpages
+  :type 'boolean)
+
+(defcustom org-ghpages-layout "post"
+  "define each top level as a post by default"
+  :group 'org-export-ghpages
+  :type 'string)
+
+(defcustom org-ghpages-categories ""
+  "categories should be space-separated"
+  :group 'org-export-ghpages
+  :type 'string)
+
+(defcustom org-ghpages-comments t
+  "include disqus comments by default"
+  :group 'org-export-ghpages
+  :type 'boolean)
+
+(defcustom org-ghpages-use-src-plugin t
+  "if true, uses pygments-style code blocking"
+  :group 'org-export-ghpages-use-src-plugin
+  :type 'boolean)
+
 (defun orgh:normalize-string (str)
   (downcase (replace-regexp-in-string " " "-" str)))
 
