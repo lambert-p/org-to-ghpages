@@ -49,9 +49,6 @@
   :group 'org-export-github-use-src-plugin
   :type 'boolean)
 
-(defun org-github-normalize-string (str)
-  "Makes strings HTML-friendly for use in URLs"
-  (downcase (replace-regexp-in-string " " "-" str)))
 
 (defvar *org-github-pygments-langs*
   (mapcar #'org-github-normalize-string
@@ -134,6 +131,19 @@ INFO is a plist used as a communication channel."
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
 
+;;; Helper functions
+
+(defun org-github-normalize-string (str)
+  "Makes strings HTML-friendly for use in URLs"
+  (downcase (replace-regexp-in-string " " "-" str)))
+
+(defun org-github-get-file-name ()
+  "Returns our post's file name, created by using our YAML front matter
+if it exists; else we default to README.md"
+  (if org-github-include-yaml-front-matter
+      (concat org-github-post-dir yaml-date yaml-permalink ".md")
+    (concat org-github-post-dir "README.md")))
+
 ;;; Interactive functions
 
 ;;;###autoload
@@ -147,6 +157,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
 
+    ;; extract our YAML for creating the frontmatter
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
@@ -157,9 +168,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
            (subtreep
             (save-restriction
               (org-narrow-to-subtree)
-              (buffer-string)))
-           ;; (file (org-export-output-file-name extension subtreep)))
-           )
+              (buffer-string))))
       (if async
           (org-export-async-start
               (lambda (output)
