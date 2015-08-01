@@ -87,9 +87,10 @@
     (italic . org-github-italic)
     (headline . org-github-headline)))
 
+;;; Transcode 
+
 (defun org-github-template (contents info)
-  "Accepts the final transcoded string and a plist of export options,
-returns the final string with YAML frontmatter prepended"
+  "Return complete document string after conversion."
   (let ((frontmatter
          "---
 layout: post
@@ -179,16 +180,5 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (interactive)
   (let ((outfile (org-export-output-file-name ".md" subtreep)))
     (org-export-to-file 'github-pages outfile async subtreep visible-only body-only ext-plist)))
-
-(defun make-org-publish-project-alist
-    (name blog-root github-pages-root)
-  (let ((github-posts (concat (file-name-as-directory github-pages-root)
-                              "_posts")))
-    `(("posts"
-       :base-directory ,blog-root
-       :base-extension "org"
-       :publishing-directory ,github-posts
-       :publishing-function org-github-publish-to-github-pages)
-      (,name :components ("posts")))))
 
 (provide 'org-to-github)
