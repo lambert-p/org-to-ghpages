@@ -6,7 +6,7 @@
 
 (defvar *org-github-yaml-front-matter* t)
 
-;; custom user vars 
+;; custom user vars
 (defgroup org-export-ghpages nil
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org Github Pages"
@@ -48,7 +48,7 @@
 (defvar *org-github-pygments-langs*
   (mapcar #'orgh:normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
-            "befunge" "boo" "brainfuck" "c, c++" "c#" "clojure" "coffeescript"
+            "befunge" "boo" "brainfuck" "c" "c++" "c#" "clojure" "coffeescript"
             "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
             "dylan" "erlang" "factor" "fancy" "fortran" "f#" "gap" "gherkin" "gl shaders"
             "groovy" "haskell" "idl" "io" "java" "javascript" "lasso" "llvm" "logtalk"
@@ -68,7 +68,9 @@
   :export-block '("MD" "GITHUB")
   :translate-alist
   '((src-block . org-github-src-block)
-    (template . org-github-template)))
+    (template . org-github-template)
+    (italic . org-github-italic)
+    (headline . org-github-headline)))
 
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
@@ -77,12 +79,11 @@ returns the final string with YAML frontmatter prepended"
          "---
 layout: post
 title: %s
-date: %s 
+date: %s
 comments: true
 categories: %s
 permalink: %s
----
-"))
+---\n"))
     (if *org-github-yaml-front-matter*
         (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
       contents)))
@@ -91,12 +92,12 @@ permalink: %s
   (and lang
        (let ((lang (orgh:normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
+               ((string= lang "shell-script") "bash")
                ((not (member lang *org-github-pygments-langs*)) nil)
                (t lang)))))
 
 (defun org-github-src-block (src-block contents info)
   "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
-  (message "%S" src-block)
   (let* ((lang (get-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          ;; (name (org-element-property :name src-block))
@@ -113,7 +114,7 @@ permalink: %s
 (defun org-github-export-as-github
     (&optional async subtreep visible-only body-only ext-plist)
   (interactive)
-  (save-excursion 
+  (save-excursion
     ;; find our first TODO state
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
@@ -123,7 +124,7 @@ permalink: %s
     (setq yaml-title (org-get-heading t t))
     (setq yaml-permalink (orgh:normalize-string yaml-title))
     (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
-    
+
     (let* ((extension ".md")
            (subtreep
             (save-restriction
