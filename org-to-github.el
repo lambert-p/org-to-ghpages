@@ -106,11 +106,7 @@ permalink: %s
                      (concat "{% highlight " lang " %}\n")
                    "```\n"))
          (footer (if lang "{% endhighlight %}" "```\n")))
-    (concat
-     header
-     value
-     footer
-     contents)))
+    (concat header value footer contents)))
 
 (defun org-github-italic (italic contents info)
   "Transcode ITALIC object into Github Flavored Markdown format.
@@ -123,10 +119,12 @@ INFO is a plist used as a communication channel."
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
 
+;;; Interactive functions
+
+;;;###autoload
 (defun org-github-export-as-gfm
     (&optional async subtreep visible-only body-only ext-plist)
-  "Export as a text file written in GitHub Flavored Markdown syntax. The generated filename
-will be written as YYY-MM-DD-normalized-post-title.md and saved to github-pages-root"
+  "Export current buffer to a GitHub Flavored Markdown buffer."
   
   (interactive)
   (save-excursion
@@ -145,7 +143,8 @@ will be written as YYY-MM-DD-normalized-post-title.md and saved to github-pages-
             (save-restriction
               (org-narrow-to-subtree)
               (buffer-string)))
-           (file (org-export-output-file-name extension subtreep)))
+           ;; (file (org-export-output-file-name extension subtreep)))
+           )
       (if async
           (org-export-async-start
               (lambda (output)
@@ -155,20 +154,17 @@ will be written as YYY-MM-DD-normalized-post-title.md and saved to github-pages-
                   (goto-char (point-min))
                   (org-export-add-to-stack (current-buffer) 'github-pages)))
             `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
-        (let ((outbuf (org-export-to-buffer 'github-pages
-                          "*Org Github Pages Export*"
+        (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
                         nil subtreep visible-only body-only ext-plist)))
-          (with-current-buffer outbuf (set-auto-mode t))
-          (when org-export-show-temporary-export-buffer
-            (switch-to-buffer-other-window outbuf)))))))
+          (with-current-buffer outbuf (set-auto-mode t)))))))
 
+;;;###autoload
 (defun org-github-export-to-gfm
     (&optional async subtreep visible-only body-only ext-plist)
-  "Export to a temporary buffer. Do not create a file."
-  )
-
-(defun org-github-publish-to-github-pages (plist filename pub-dir)
-  (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
+  "Export to file"
+  (interactive)
+  (let ((outfile (org-export-output-file-name ".md" subtreep)))
+    (org-export-to-file 'github-pages outfile async subtreep visible-only body-only ext-plist)))
 
 (defun make-org-publish-project-alist
     (name blog-root github-pages-root)
@@ -181,3 +177,4 @@ will be written as YYY-MM-DD-normalized-post-title.md and saved to github-pages-
        :publishing-function org-github-publish-to-github-pages)
       (,name :components ("posts")))))
 
+(provide 'org-to-github)
