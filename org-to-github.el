@@ -5,42 +5,41 @@
 (eval-when-compile (require 'cl))
 (require 'ox-md)
 
-(defvar *org-github-yaml-front-matter* t)
+;;;; custom user vars
 
-;; custom user vars
-(defgroup org-export-ghpages nil
+(defgroup org-export-github nil
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org Github Pages"
   :group `org-export)
 
-(defcustom org-ghpages-post-dir (expand-file-name "~/code/lambertington.github.io/_posts")
+(defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts")
   "directory to save posts"
-  :group 'org-export-ghpages
+  :group 'org-export-github
   :type 'directory)
 
-(defcustom org-ghpages-include-yaml-front-matter t
+(defcustom org-github-include-yaml-front-matter t
   "automatically generate YAML front matter?"
-  :group 'org-export-ghpages
+  :group 'org-export-github
   :type 'boolean)
 
-(defcustom org-ghpages-layout "post"
+(defcustom org-github-layout "post"
   "define each top level as a post by default"
-  :group 'org-export-ghpages
+  :group 'org-export-github
   :type 'string)
 
-(defcustom org-ghpages-categories ""
+(defcustom org-github-categories ""
   "categories should be space-separated"
-  :group 'org-export-ghpages
+  :group 'org-export-github
   :type 'string)
 
-(defcustom org-ghpages-comments t
+(defcustom org-github-comments t
   "include disqus comments by default"
-  :group 'org-export-ghpages
+  :group 'org-export-github
   :type 'boolean)
 
-(defcustom org-ghpages-use-src-plugin t
+(defcustom org-github-use-src-plugin t
   "if true, uses pygments-style code blocking"
-  :group 'org-export-ghpages-use-src-plugin
+  :group 'org-export-github-use-src-plugin
   :type 'boolean)
 
 (defun orgh:normalize-string (str)
@@ -85,7 +84,7 @@ comments: true
 categories: %s
 permalink: %s
 ---\n"))
-    (if org-ghpages-include-yaml-front-matter
+    (if org-github-include-yaml-front-matter
         (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
       contents)))
 
