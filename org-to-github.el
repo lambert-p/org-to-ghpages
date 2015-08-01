@@ -20,7 +20,7 @@
   :group `org-export
   :version "24.5.1")
 
-(defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts")
+(defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts/")
   "directory to save posts"
   :group 'org-export-github
   :type 'directory)
@@ -60,7 +60,7 @@
   "Returns our post's file name, created by using our YAML front matter
 if it exists; else we default to README.md"
   (if org-github-include-yaml-front-matter
-      (concat org-github-post-dir yaml-date yaml-permalink ".md")
+      (concat org-github-post-dir "/" yaml-date "-" yaml-permalink ".md")
     (concat org-github-post-dir "README.md")))
 
 (defvar *org-github-pygments-langs*
@@ -163,7 +163,6 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
     (setq yaml-permalink (org-github-normalize-string yaml-title))
-    (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
 
     (let* ((extension ".md")
            (subtreep
@@ -190,20 +189,16 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
     (setq yaml-permalink (org-github-normalize-string yaml-title))
-    (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
 
     (let* ((extension ".md")
            (subtreep
             (save-restriction
               (org-narrow-to-subtree)
               (buffer-string))))
-      (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
-                      nil subtreep visible-only body-only ext-plist)))
-        (with-current-buffer outbuf (set-auto-mode t))))))
+      (let ((org-export-coding-system org-html-coding-system))
+        (org-export-to-file 'github-pages (org-github-get-file-name) async subtreep
+                            visible-only body-only ext-plist)))))
 
-  (interactive)
-  (let ((outfile (org-export-output-file-name ".md" subtreep)))
-    (org-export-to-file 'github-pages outfile async subtreep visible-only body-only ext-plist)))
 
 
 (provide 'org-to-github)
