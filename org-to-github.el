@@ -1,17 +1,23 @@
-;;; org-to-github.el
-;;; Author: Paul Lambert <lambertington@gmail.com>
+;;; org-to-github.el - GitHub Flavored Markdown for use with Jekyll
+
+;; Author: Paul Lambert <lambertington@gmail.com>
+;; Copyright (C) 2015 Paul Lambert
+;; Please consult the included license.txt
+
 
 ;;;; Code:
 
 (eval-when-compile (require 'cl))
 (require 'ox-md)
 
-;;;; custom user vars
+
+;;;; User config variables
 
 (defgroup org-export-github nil
   "Options for exporting org-mode files to Github Pages Markdown"
-  :tag "Org Github Pages"
-  :group `org-export)
+  :tag "Org GitHub Flavored Markdown"
+  :group `org-export
+  :version "24.5.1")
 
 (defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts")
   "directory to save posts"
@@ -43,11 +49,12 @@
   :group 'org-export-github-use-src-plugin
   :type 'boolean)
 
-(defun orgh:normalize-string (str)
+(defun org-github-normalize-string (str)
+  "Makes strings HTML-friendly for use in URLs"
   (downcase (replace-regexp-in-string " " "-" str)))
 
 (defvar *org-github-pygments-langs*
-  (mapcar #'orgh:normalize-string
+  (mapcar #'org-github-normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
             "befunge" "boo" "brainfuck" "c" "c++" "c#" "clojure" "coffeescript"
             "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
@@ -65,8 +72,15 @@
             "robot" "rpm" "sql" "trac" "mysql" "sqlite" "squid" "tex" "tcsh" "vimscript"
             "windows" "xml" "xslt" "yaml")))
 
+;;; Define back-end
+
 (org-export-define-derived-backend 'github-pages 'md
   :export-block '("MD" "GITHUB")
+  :menu-entry
+  '(?g "Export to GitHub Flavored Markdown"
+       ((?G "To temporary buffer"
+            (lambda (a s v b) (org-github-export-as-gfm a s v)))
+        (?g "To file" (lambda (a s v b) (org-github-export-to-gfm a s v)))))
   :translate-alist
   '((src-block . org-github-src-block)
     (template . org-github-template)
@@ -91,7 +105,7 @@ permalink: %s
 
 (defun org-github-get-pygments-lang (lang)
   (and lang
-       (let ((lang (orgh:normalize-string lang)))
+       (let ((lang (org-github-normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
                ((string= lang "shell-script") "bash")
                ((not (member lang *org-github-pygments-langs*)) nil)
@@ -135,7 +149,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
-    (setq yaml-permalink (orgh:normalize-string yaml-title))
+    (setq yaml-permalink (org-github-normalize-string yaml-title))
     (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
 
     (let* ((extension ".md")
