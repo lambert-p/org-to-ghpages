@@ -2,6 +2,7 @@
 ;;; Author: Paul Lambert <lambertington@gmail.com>
 
 ;;;; Code:
+
 (eval-when-compile (require 'cl))
 (require 'ox-md)
 
@@ -69,8 +70,8 @@
   :translate-alist
   '((src-block . org-github-src-block)
     (template . org-github-template)
-    (italic . org-github-italic)))
-    ;; (headline . org-github-headline)))
+    (italic . org-github-italic)
+    (headline . org-github-headline)))
 
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
@@ -116,6 +117,11 @@ permalink: %s
 CONTENTS is the text within italic markup. 
 INFO is a plist used as a communication channel."
   (format "*%s*" contents))
+
+(defun org-github-headline (headline contents info)
+  "Transcode HEADLINE element into GitHub Flavored Markdown.
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
+  (concat "#" (org-md-headline headline contents info)))
 
 (defun org-github-export-as-gfm
     (&optional async subtreep visible-only body-only ext-plist)
