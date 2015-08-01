@@ -1,7 +1,8 @@
 ;;; org-to-github.el
 ;;; Author: Paul Lambert <lambertington@gmail.com>
 
-(require 'ox)
+;;;; Code:
+(eval-when-compile (require 'cl))
 (require 'ox-md)
 
 (defvar *org-github-yaml-front-matter* t)
@@ -69,8 +70,8 @@
   :translate-alist
   '((src-block . org-github-src-block)
     (template . org-github-template)
-    (italic . org-github-italic)
-    (headline . org-github-headline)))
+    (italic . org-github-italic)))
+    ;; (headline . org-github-headline)))
 
 (defun org-github-template (contents info)
   "Accepts the final transcoded string and a plist of export options,
@@ -84,11 +85,11 @@ comments: true
 categories: %s
 permalink: %s
 ---\n"))
-    (if *org-github-yaml-front-matter*
+    (if org-ghpages-include-yaml-front-matter
         (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
       contents)))
 
-(defun get-lang (lang)
+(defun org-github-get-pygments-lang (lang)
   (and lang
        (let ((lang (orgh:normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
@@ -98,7 +99,7 @@ permalink: %s
 
 (defun org-github-src-block (src-block contents info)
   "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
-  (let* ((lang (get-lang (org-element-property :language src-block)))
+  (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          ;; (name (org-element-property :name src-block))
          (header (if lang
@@ -111,8 +112,17 @@ permalink: %s
      footer
      contents)))
 
-(defun org-github-export-as-github
+(defun org-github-italic (italic contents info)
+  "Transcode ITALIC object into Github Flavored Markdown format.
+CONTENTS is the text within italic markup. 
+INFO is a plist used as a communication channel."
+  (format "*%s*" contents))
+
+(defun org-github-export-as-gfm
     (&optional async subtreep visible-only body-only ext-plist)
+  "Export as a text file written in GitHub Flavored Markdown syntax. The generated filename
+will be written as YYY-MM-DD-normalized-post-title.md and saved to github-pages-root"
+  
   (interactive)
   (save-excursion
     ;; find our first TODO state
@@ -147,6 +157,11 @@ permalink: %s
           (when org-export-show-temporary-export-buffer
             (switch-to-buffer-other-window outbuf)))))))
 
+(defun org-github-export-to-gfm
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export to a temporary buffer. Do not create a file."
+  )
+
 (defun org-github-publish-to-github-pages (plist filename pub-dir)
   (org-publish-org-to 'github-pages filename ".md" plist pub-dir))
 
@@ -160,6 +175,4 @@ permalink: %s
        :publishing-directory ,github-posts
        :publishing-function org-github-publish-to-github-pages)
       (,name :components ("posts")))))
-
-
 
