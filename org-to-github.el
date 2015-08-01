@@ -11,6 +11,7 @@
 (require 'ox-md)
 
 
+
 ;;;; User config variables
 
 (defgroup org-export-github nil
@@ -49,6 +50,18 @@
   :group 'org-export-github-use-src-plugin
   :type 'boolean)
 
+;;; Helper functions
+
+(defun org-github-normalize-string (str)
+  "Makes strings HTML-friendly for use in URLs"
+  (downcase (replace-regexp-in-string " " "-" str)))
+
+(defun org-github-get-file-name ()
+  "Returns our post's file name, created by using our YAML front matter
+if it exists; else we default to README.md"
+  (if org-github-include-yaml-front-matter
+      (concat org-github-post-dir yaml-date yaml-permalink ".md")
+    (concat org-github-post-dir "README.md")))
 
 (defvar *org-github-pygments-langs*
   (mapcar #'org-github-normalize-string
@@ -68,6 +81,7 @@
             "makefile" "moinmoin" "mysql" "nginx" "pov-ray" "ragel" "redcode" "rest"
             "robot" "rpm" "sql" "trac" "mysql" "sqlite" "squid" "tex" "tcsh" "vimscript"
             "windows" "xml" "xslt" "yaml")))
+
 
 ;;; Define back-end
 
@@ -131,19 +145,6 @@ INFO is a plist used as a communication channel."
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
 
-;;; Helper functions
-
-(defun org-github-normalize-string (str)
-  "Makes strings HTML-friendly for use in URLs"
-  (downcase (replace-regexp-in-string " " "-" str)))
-
-(defun org-github-get-file-name ()
-  "Returns our post's file name, created by using our YAML front matter
-if it exists; else we default to README.md"
-  (if org-github-include-yaml-front-matter
-      (concat org-github-post-dir yaml-date yaml-permalink ".md")
-    (concat org-github-post-dir "README.md")))
-
 ;;; Interactive functions
 
 ;;;###autoload
@@ -169,25 +170,40 @@ if it exists; else we default to README.md"
             (save-restriction
               (org-narrow-to-subtree)
               (buffer-string))))
-      (if async
-          (org-export-async-start
-              (lambda (output)
-                (with-current-buffer (get-buffer-create "*Org Github Pages Export*")
-                  (erase-buffer)
-                  (insert output)
-                  (goto-char (point-min))
-                  (org-export-add-to-stack (current-buffer) 'github-pages)))
-            `(org-export-as 'github-pages ,subtreep ,visible-only ,body-only ',ext-plist))
-        (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
-                        nil subtreep visible-only body-only ext-plist)))
-          (with-current-buffer outbuf (set-auto-mode t)))))))
+      (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
+                      nil subtreep visible-only body-only ext-plist)))
+        (with-current-buffer outbuf (set-auto-mode t))))))
 
 ;;;###autoload
 (defun org-github-export-to-gfm
     (&optional async subtreep visible-only body-only ext-plist)
-  "Export to file"
+  "Export current buffer to file in GitHub Flavored Markdown format"
+
+  (interactive)
+  (save-excursion
+    ;; find our first TODO state
+    (while (null (org-entry-get (point) "TODO" nil t))
+      (outline-up-heading 1 t))
+
+    ;; extract our YAML for creating the frontmatter
+    (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
+    (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
+    (setq yaml-title (org-get-heading t t))
+    (setq yaml-permalink (org-github-normalize-string yaml-title))
+    (setq org-export-output-file-name (concat yaml-date "-" yaml-permalink))
+
+    (let* ((extension ".md")
+           (subtreep
+            (save-restriction
+              (org-narrow-to-subtree)
+              (buffer-string))))
+      (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
+                      nil subtreep visible-only body-only ext-plist)))
+        (with-current-buffer outbuf (set-auto-mode t))))))
+
   (interactive)
   (let ((outfile (org-export-output-file-name ".md" subtreep)))
     (org-export-to-file 'github-pages outfile async subtreep visible-only body-only ext-plist)))
+
 
 (provide 'org-to-github)
