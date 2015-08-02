@@ -112,6 +112,8 @@ permalink: %s
       contents)))
 
 (defun org-github-get-pygments-lang (lang)
+  "Determine whether our SRC-BLOCK data is in a language supported
+by Pygments coloring. Otherwise revert to default coloring behavior."
   (and lang
        (let ((lang (org-github-normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
@@ -124,7 +126,6 @@ permalink: %s
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
-         ;; (name (org-element-property :name src-block))
          (header (if lang
                      (concat "{% highlight " lang " %}\n")
                    "```\n"))
@@ -201,5 +202,6 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
                             visible-only body-only ext-plist)))))
 
 
+;;;; End code
 
 (provide 'org-to-github)
