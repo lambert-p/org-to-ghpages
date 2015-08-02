@@ -9,7 +9,7 @@ This is a small emacs script for exporting org-mode files to github flavored mar
 
 Literate programming is *awesome*! 
 
-** Installing
+** Usage
 Place =org-to-github.el= somewhere in your emacs' init file's load path, and then add the following lines to your init.el:
 
 #+BEGIN_SRC emacs-lisp
@@ -27,16 +27,27 @@ Make sure you use =#+OPTIONS: toc:nil= to turn off exporting the ugly table of c
 *** Custom Options
 There's a bunch of vars to set. Umm. I need to implement their functionality first, and then I'll have better documentation. 
 
-* TODO bugs
 * TODO add a license
 ** TODO It will be GPL
 
 * TODO add thanks to other sources used. 
 * TODO Examples
-  Headings:
-** H2
-*** H3
-**** H4
+  The following are example outputs for this export mode. You can check the =Examples= subheading in =project.org= and the equivalent =examples.md= for the corresponding GitHub Flavored Markdown export. This file was generated merely by setting =org-github-use-src-plugin= and =org-github-include-yaml-front-matter= both to =nil= before exporting (due to GitHub not supporting Pygments and not
+needing frontmatter!)
+
+-----
+
+The usual *bolding* and /italicizing/ works as well, as well as +strikethrough+!
+
+-----
+
+Headings:
+
+** Headline 2
+*** Headline 3
+**** Headline 4
+
+-----
 
 Inline code: =sudo apt-get update && sudo apt-get upgrade=
 
@@ -50,12 +61,16 @@ Tagged code-block (with org-github-use-src-plugin set to nil):
     :version "24.5.1")
 #+END_SRC
 
+-----
+
 For blockquotes:
 
 #+BEGIN_QUOTE
 "Never trust anything you read on the internet -- especially if it
 is on GitHub, HackerNews, or Reddit." - Abraham Lincoln
 #+END_QUOTE
+
+-----
 
 Lists:
 
@@ -69,5 +84,4 @@ My favorite lists are (in this order):
    - The end is nigh!
    - Important value :: has some importance to somebody
 
-The usual *bolding* and /italicizing/ works as well. 
 
