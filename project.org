@@ -5,7 +5,7 @@
 
 * TODO org-to-github README file 
 
-This is a small emacs script for exporting org-mode files to github flavored markdown for usage as project README pages or a personal blog using Jekyll. To get started, place org-to-github.el somewhere in your load path, and update your emacs.d to reference it. 
+This is a small emacs script for exporting org-mode files to github flavored markdown for usage on a Jekyll-powered blog or GitHub project . To get started, place org-to-github.el somewhere in your load path, and update your emacs.d to reference it. 
 
 Literate programming is *awesome*! 
 
