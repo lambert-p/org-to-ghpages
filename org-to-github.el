@@ -129,7 +129,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
          (header (if lang
                      (if org-github-use-src-plugin
                          (concat "{% highlight " lang " %}\n")
-                       (concat "``` " lang "\n"))
+                       (concat "```" lang "\n"))
                    "```\n"))
          (footer (if lang
                      (if org-github-use-src-plugin
