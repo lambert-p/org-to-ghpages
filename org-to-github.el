@@ -1,9 +1,40 @@
 ;;; org-to-github.el - GitHub Flavored Markdown for use with Jekyll
 
-;; Author: Paul Lambert <lambertington@gmail.com>
 ;; Copyright (C) 2015 Paul Lambert
-;; Please consult the included license.txt
 
+;; Author: Paul Lambert <lambertington at gmail dot com>
+;; Keywords: github, markdown, org
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; This library implements a GitHub Flavored Markdown backend for the
+;; Org exporter, and is built on top of the `ox-md` backend.
+;;
+;; By default, this library can be invoked by executing C-c C-e g
+;; from within org-mode. Its default output is designed for
+;; GitHub Pages blogs, built upon Jekyll.
+;;
+;; Through configuration, it can also be used for publishing standard
+;; GitHub Flavored Markdown, useful for GitHub Pages (such as generating
+;; README.md's for a GitHub's project.)
+;;
+;; For more complete documentation, including usage, please refer to
+;; either the included README.md or the project's repository, located
+;; at https://github.com/lambertington/org-to-github/
 
 ;;;; Code:
 
