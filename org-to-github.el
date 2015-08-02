@@ -11,7 +11,6 @@
 (require 'ox-md)
 
 
-
 ;;;; User config variables
 
 (defgroup org-export-github nil
@@ -20,7 +19,7 @@
   :group `org-export
   :version "24.5.1")
 
-(defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts/")
+(defcustom org-github-post-dir (expand-file-name "~/Documents")
   "directory to save posts"
   :group 'org-export-github
   :type 'directory)
@@ -32,11 +31,6 @@
 
 (defcustom org-github-layout "post"
   "define each top level as a post by default"
-  :group 'org-export-github
-  :type 'string)
-
-(defcustom org-github-categories ""
-  "categories should be space-separated"
   :group 'org-export-github
   :type 'string)
 
@@ -95,6 +89,7 @@ if it exists; else we default to README.md"
   :translate-alist
   '((src-block . org-github-src-block)
     (template . org-github-template)
+    (strike-through . org-github-strike-through)
     (italic . org-github-italic)
     (headline . org-github-headline)))
 
@@ -102,17 +97,18 @@ if it exists; else we default to README.md"
 
 (defun org-github-template (contents info)
   "Return complete document string after conversion."
-  (let ((frontmatter
+  (let ((yaml-comments (if org-github-comments "true" "false"))
+        (frontmatter
          "---
-layout: post
+layout: %s
 title: %s
 date: %s
-comments: true
+comments: %s
 categories: %s
 permalink: %s
 ---\n"))
     (if org-github-include-yaml-front-matter
-        (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
+        (concat (format frontmatter org-github-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
       contents)))
 
 (defun org-github-get-pygments-lang (lang)
@@ -124,7 +120,8 @@ permalink: %s
                (t lang)))))
 
 (defun org-github-src-block (src-block contents info)
-  "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
+  "Transcode a #+BEGIN_SRC block from Org to Github Pages style
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          ;; (name (org-element-property :name src-block))
@@ -136,14 +133,18 @@ permalink: %s
 
 (defun org-github-italic (italic contents info)
   "Transcode ITALIC object into Github Flavored Markdown format.
-CONTENTS is the text within italic markup. 
-INFO is a plist used as a communication channel."
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (format "*%s*" contents))
 
 (defun org-github-headline (headline contents info)
   "Transcode HEADLINE element into GitHub Flavored Markdown.
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
+
+(defun org-github-strike-through (strike-through contents info)
+  "Transcode STRIKE-THROUGH into GitHub Flavored Markdown.
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
+  (format "~~%s~~" contents))
 
 ;;; Interactive functions
 
