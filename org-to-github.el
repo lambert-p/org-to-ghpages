@@ -1,4 +1,4 @@
-;;; org-to-github.el - GitHub Flavored Markdown for use with Jekyll
+;;; org-to-github.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
 
 ;; Copyright (C) 2015 Paul Lambert
 
