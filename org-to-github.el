@@ -16,7 +16,7 @@
 (defgroup org-export-github nil
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org GitHub Flavored Markdown"
-  :group `org-export
+  :group 'org-export
   :version "24.5.1")
 
 (defcustom org-github-post-dir (expand-file-name "~/Documents")
@@ -41,7 +41,7 @@
 
 (defcustom org-github-use-src-plugin t
   "if true, uses pygments-style code blocking"
-  :group 'org-export-github-use-src-plugin
+  :group 'org-export-github
   :type 'boolean)
 
 ;;; Helper functions
@@ -127,9 +127,15 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          (header (if lang
-                     (concat "{% highlight " lang " %}\n")
+                     (if org-github-use-src-plugin
+                         (concat "{% highlight " lang " %}\n")
+                       (concat "``` " lang "\n"))
                    "```\n"))
-         (footer (if lang "{% endhighlight %}" "```\n")))
+         (footer (if lang
+                     (if org-github-use-src-plugin
+                         "{% endhighlight %}\n"
+                       "```\n")
+                   "```\n")))
     (concat header value footer contents)))
 
 (defun org-github-italic (italic contents info)
