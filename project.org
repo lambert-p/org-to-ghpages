@@ -7,7 +7,8 @@
 
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
-[[/emacs1.png?raw=true]]
+[[/images/emacs1.png?raw%3Dtrue][/images/emacs1.png?raw=true]]
+[[https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs1.png?raw%3Dtrue][https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs1.png?raw=true]]
 
 ** Usage
 Place =org-to-ghpages.el= somewhere in your Emacs' load path, and then add the following lines to your init.el:
