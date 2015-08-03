@@ -2,9 +2,25 @@
 
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
+## A Visual Guide
+
+Let's say we have all of our blog posts as `TODO` items in an org file. 
 ![img](https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs1.png)
 
-## Usage
+This has practical value, as we can get automatic reminders about writing and quickly refactor posts.
+![img](https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs2.png)
+
+Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog using gh-pages!Hit `C-c C-e g G` to put it in a buffer&#x2026;
+![img](https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs3.png)
+
+Or we can just hit `C-c C-e g g` to export it directly to our blog (assuming we've set up our default directory properly).
+![img](https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs4.png)
+
+And bam, that's all you have to do. From here you can run your blog locally to make sure everything's peachy, or just `git push` off to victory.
+
+Easy peasy.
+
+## Quick Start
 
 Place `org-to-ghpages.el` somewhere in your Emacs' load path, and then add the following lines to your init.el:
 
@@ -100,7 +116,7 @@ If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pa
 
 ## Examples
 
-To see how this is used, please look at `project.org` which is in this repository. I generated both the `README.md` and `examples.md` files aginst this file.
+To see a practical example of how this is used, please look at `project.org` which is in this repository. I generated both the `README.md` and `examples.md` files aginst this file.
 
 ## Requirements
 
