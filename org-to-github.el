@@ -1,9 +1,40 @@
-;;; org-to-github.el - GitHub Flavored Markdown for use with Jekyll
+;;; org-to-github.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
 
-;; Author: Paul Lambert <lambertington@gmail.com>
 ;; Copyright (C) 2015 Paul Lambert
-;; Please consult the included license.txt
 
+;; Author: Paul Lambert <lambertington at gmail dot com>
+;; Keywords: github, markdown, org
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; This library implements a GitHub Flavored Markdown backend for the
+;; Org exporter, and is built on top of the `ox-md` backend.
+;;
+;; By default, this library can be invoked by executing C-c C-e g
+;; from within org-mode. Its default output is designed for
+;; GitHub Pages blogs, built upon Jekyll.
+;;
+;; Through configuration, it can also be used for publishing standard
+;; GitHub Flavored Markdown, useful for GitHub Pages (such as generating
+;; README.md's for a GitHub's project.)
+;;
+;; For more complete documentation, including usage, please refer to
+;; either the included README.md or the project's repository, located
+;; at https://github.com/lambertington/org-to-github/
 
 ;;;; Code:
 
@@ -11,16 +42,15 @@
 (require 'ox-md)
 
 
-
 ;;;; User config variables
 
 (defgroup org-export-github nil
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org GitHub Flavored Markdown"
-  :group `org-export
+  :group 'org-export
   :version "24.5.1")
 
-(defcustom org-github-post-dir (expand-file-name "~/code/lambertington.github.io/_posts/")
+(defcustom org-github-post-dir (expand-file-name "~/Documents")
   "directory to save posts"
   :group 'org-export-github
   :type 'directory)
@@ -35,11 +65,6 @@
   :group 'org-export-github
   :type 'string)
 
-(defcustom org-github-categories ""
-  "categories should be space-separated"
-  :group 'org-export-github
-  :type 'string)
-
 (defcustom org-github-comments t
   "include disqus comments by default"
   :group 'org-export-github
@@ -47,7 +72,7 @@
 
 (defcustom org-github-use-src-plugin t
   "if true, uses pygments-style code blocking"
-  :group 'org-export-github-use-src-plugin
+  :group 'org-export-github
   :type 'boolean)
 
 ;;; Helper functions
@@ -95,6 +120,7 @@ if it exists; else we default to README.md"
   :translate-alist
   '((src-block . org-github-src-block)
     (template . org-github-template)
+    (strike-through . org-github-strike-through)
     (italic . org-github-italic)
     (headline . org-github-headline)))
 
@@ -102,20 +128,23 @@ if it exists; else we default to README.md"
 
 (defun org-github-template (contents info)
   "Return complete document string after conversion."
-  (let ((frontmatter
+  (let ((yaml-comments (if org-github-comments "true" "false"))
+        (frontmatter
          "---
-layout: post
+layout: %s
 title: %s
 date: %s
-comments: true
+comments: %s
 categories: %s
 permalink: %s
 ---\n"))
     (if org-github-include-yaml-front-matter
-        (concat (format frontmatter yaml-title yaml-date yaml-tags yaml-permalink) contents)
+        (concat (format frontmatter org-github-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
       contents)))
 
 (defun org-github-get-pygments-lang (lang)
+  "Determine whether our SRC-BLOCK data is in a language supported
+by Pygments coloring. Otherwise revert to default coloring behavior."
   (and lang
        (let ((lang (org-github-normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
@@ -124,26 +153,36 @@ permalink: %s
                (t lang)))))
 
 (defun org-github-src-block (src-block contents info)
-  "Transcode a #+BEGIN_SRC block from Org to Github Pages style"
+  "Transcode a #+BEGIN_SRC block from Org to Github Pages style
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
-         ;; (name (org-element-property :name src-block))
          (header (if lang
-                     (concat "{% highlight " lang " %}\n")
+                     (if org-github-use-src-plugin
+                         (concat "{% highlight " lang " %}\n")
+                       (concat "```" lang "\n"))
                    "```\n"))
-         (footer (if lang "{% endhighlight %}" "```\n")))
+         (footer (if lang
+                     (if org-github-use-src-plugin
+                         "{% endhighlight %}\n"
+                       "```\n")
+                   "```\n")))
     (concat header value footer contents)))
 
 (defun org-github-italic (italic contents info)
   "Transcode ITALIC object into Github Flavored Markdown format.
-CONTENTS is the text within italic markup. 
-INFO is a plist used as a communication channel."
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (format "*%s*" contents))
 
 (defun org-github-headline (headline contents info)
   "Transcode HEADLINE element into GitHub Flavored Markdown.
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
+
+(defun org-github-strike-through (strike-through contents info)
+  "Transcode STRIKE-THROUGH into GitHub Flavored Markdown.
+Please consult ./lisp/org/ox-md.el.gz for additional documentation."
+  (format "~~%s~~" contents))
 
 ;;; Interactive functions
 
@@ -200,5 +239,6 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
                             visible-only body-only ext-plist)))))
 
 
+;;;; End code
 
 (provide 'org-to-github)

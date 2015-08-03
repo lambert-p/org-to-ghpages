@@ -5,11 +5,11 @@
 
 * TODO org-to-github README file 
 
-This is a small emacs script for exporting org-mode files to github flavored markdown for usage as project README pages or a personal blog using Jekyll. To get started, place org-to-github.el somewhere in your load path, and update your emacs.d to reference it. 
+This is a small emacs script for exporting org-mode files to github flavored markdown for usage on a Jekyll-powered blog or GitHub project . To get started, place org-to-github.el somewhere in your load path, and update your emacs.d to reference it. 
 
 Literate programming is *awesome*! 
 
-** Installing
+** Usage
 Place =org-to-github.el= somewhere in your emacs' init file's load path, and then add the following lines to your init.el:
 
 #+BEGIN_SRC emacs-lisp
@@ -27,11 +27,61 @@ Make sure you use =#+OPTIONS: toc:nil= to turn off exporting the ugly table of c
 *** Custom Options
 There's a bunch of vars to set. Umm. I need to implement their functionality first, and then I'll have better documentation. 
 
-* TODO bugs
-** TODO exporting the top "post", as it were, also exports some Table of Contents nonsense HTML. Need to get rid of that. 
-** TODO implement customization options
-
 * TODO add a license
 ** TODO It will be GPL
 
 * TODO add thanks to other sources used. 
+* TODO Examples
+  The following are example outputs for this export mode. You can check the =Examples= subheading in =project.org= and the equivalent =examples.md= for the corresponding GitHub Flavored Markdown export. This file was generated merely by setting =org-github-use-src-plugin= and =org-github-include-yaml-front-matter= both to =nil= before exporting (due to GitHub not supporting Pygments and not
+needing frontmatter!)
+
+-----
+
+The usual *bolding* and /italicizing/ works as well, as well as +strikethrough+!
+
+-----
+
+Headings:
+
+** Headline 2
+*** Headline 3
+**** Headline 4
+
+-----
+
+Inline code: =sudo apt-get update && sudo apt-get upgrade=
+
+Tagged code-block (with org-github-use-src-plugin set to nil):
+
+#+BEGIN_SRC emacs-lisp
+  (defgroup org-export-github nil
+    "Options for exporting org-mode files to Github Pages Markdown"
+    :tag "Org GitHub Flavored Markdown"
+    :group 'org-export
+    :version "24.5.1")
+#+END_SRC
+
+-----
+
+For blockquotes:
+
+#+BEGIN_QUOTE
+"Never trust anything you read on the internet -- especially if it
+is on GitHub, HackerNews, or Reddit." - Abraham Lincoln
+#+END_QUOTE
+
+-----
+
+Lists:
+
+My favorite lists are (in this order):
+
+1. Ones that are succinct
+2. Ones that have some practical value
+   + Like showing off functionality
+   + Or, ideally, providing somewhat useful documentation
+3. Ones that eventually end
+   - The end is nigh!
+   - Important value :: has some importance to somebody
+
+
