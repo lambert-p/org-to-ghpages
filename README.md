@@ -2,7 +2,7 @@
 
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
-![emacs1](file:///emacs1.png?raw=true)
+![emacs1](/emacs1.png?raw=true)
 
 ## Usage
 
