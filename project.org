@@ -14,25 +14,27 @@ Let's say we have all of our blog posts as =TODO= items in an org file.
 This has practical value, as we can get automatic reminders about writing and quickly refactor posts.
 [[file:https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs2.png]]
 
-Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog using gh-pages!Hit =C-c C-e g G= to put it in a buffer...
+Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! Hit =C-c C-e g G= to put it in a temp buffer...
 [[file:https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs3.png]]
 
-Or we can just hit =C-c C-e g g= to export it directly to our blog (assuming we've set up our default directory properly).
+(An astute viewer will notice that the YAML front matter has been automatically filled out, with the publishing date being the =SCHEDULED= date, the categories being taken from org-mode tags, and the permalink being the title of the post in a Web-friendly way.)
+
+Or we can just hit =C-c C-e g g= to export it directly to our blog (assuming we've set up our default directory properly). 
 [[file:https://github.com/lambertington/org-to-ghpages/blob/master/images/emacs4.png]]
 
-And bam, that's all you have to do. From here you can run your blog locally to make sure everything's peachy, or just =git push= off to victory.
+And bam, that's all. From here you can run your blog locally to make sure everything's peachy, or just =git push= off to victory!
 
 Easy peasy.
 
 ** Quick Start
-Place =org-to-ghpages.el= somewhere in your Emacs' load path, and then add the following lines to your init.el:
+Place =src/org-to-ghpages.el= somewhere in your Emacs' load path, and then add the following lines to your init.el:
 
 #+BEGIN_SRC emacs-lisp
   (require 'org-to-ghpages)
   (setq org-ghpages-post-dir "~/location/of/jekyll/blog/_posts/")
 #+END_SRC
 
-(To see a literate example of how /I/ use this, please refer to [[https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts][my init file]].)
+(To see a literate example of how I use this, please refer to [[https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts][my init file]].)
 
 By default, this library can be invoked by executing =C-c C-e g= from within org-mode on a =TODO= list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified =org-ghpages-post-dir= with smart guesses for YAML front matter data, with the file name of =YYYY-MM-DD-title-of-post.md=. 
 
@@ -97,7 +99,9 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 
 =org-ghpages-use-src-plugin=: A boolean to indicate whether you want source blocks surrounded with Pygments-style tags. 
 + If set to =t= (which is the default), your source blocks will be wrapped with ={% highlight lang %} / {% endhighlight %}= tags, where the value of =lang= is taken from your =#+BEGIN_SRC= declarations. 
-+ If set to =nil=, it will wrap source blocks with the triple backquotes tags, including =lang= if it is available (again, taken from your =#+BEGIN_SRC= blocks.
++ If set to =nil=, it will wrap source blocks with the triple backquotes tags, including =lang= if it is available (again, taken from your =#+BEGIN_SRC= blocks).
+  
+To export a =TODO= item as a GitHub Flavored Markdown file (like this =README.md= for example!), you will want to set this to nil (e.g., =M-x set-variable [RET] org-ghpages-use-src-plugin [RET] nil=).
  
 #+BEGIN_SRC emacs-lisp
 (defcustom org-ghpages-use-src-plugin t
