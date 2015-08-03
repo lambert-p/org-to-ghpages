@@ -1,4 +1,4 @@
-;;; org-to-github.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
+;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
 
 ;; Copyright (C) 2015 Paul Lambert
 
@@ -34,7 +34,7 @@
 ;;
 ;; For more complete documentation, including usage, please refer to
 ;; either the included README.md or the project's repository, located
-;; at https://github.com/lambertington/org-to-github/
+;; at https://github.com/lambertington/org-to-ghpages/
 
 ;;;; Code:
 
@@ -44,52 +44,52 @@
 
 ;;;; User config variables
 
-(defgroup org-export-github nil
+(defgroup org-export-ghpages nil
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org GitHub Flavored Markdown"
   :group 'org-export
   :version "24.5.1")
 
-(defcustom org-github-post-dir (expand-file-name "~/Documents")
+(defcustom org-ghpages-post-dir (expand-file-name "~/Documents")
   "directory to save posts"
-  :group 'org-export-github
+  :group 'org-export-ghpages
   :type 'directory)
 
-(defcustom org-github-include-yaml-front-matter t
+(defcustom org-ghpages-include-yaml-front-matter t
   "automatically generate YAML front matter?"
-  :group 'org-export-github
+  :group 'org-export-ghpages
   :type 'boolean)
 
-(defcustom org-github-layout "post"
+(defcustom org-ghpages-layout "post"
   "define each top level as a post by default"
-  :group 'org-export-github
+  :group 'org-export-ghpages
   :type 'string)
 
-(defcustom org-github-comments t
+(defcustom org-ghpages-comments t
   "include disqus comments by default"
-  :group 'org-export-github
+  :group 'org-export-ghpages
   :type 'boolean)
 
-(defcustom org-github-use-src-plugin t
+(defcustom org-ghpages-use-src-plugin t
   "if true, uses pygments-style code blocking"
-  :group 'org-export-github
+  :group 'org-export-ghpages
   :type 'boolean)
 
 ;;; Helper functions
 
-(defun org-github-normalize-string (str)
+(defun org-ghpages-normalize-string (str)
   "Makes strings HTML-friendly for use in URLs"
   (downcase (replace-regexp-in-string " " "-" str)))
 
-(defun org-github-get-file-name ()
+(defun org-ghpages-get-file-name ()
   "Returns our post's file name, created by using our YAML front matter
 if it exists; else we default to README.md"
-  (if org-github-include-yaml-front-matter
-      (concat org-github-post-dir "/" yaml-date "-" yaml-permalink ".md")
-    (concat org-github-post-dir "README.md")))
+  (if org-ghpages-include-yaml-front-matter
+      (concat org-ghpages-post-dir "/" yaml-date "-" yaml-permalink ".md")
+    (concat org-ghpages-post-dir "README.md")))
 
-(defvar *org-github-pygments-langs*
-  (mapcar #'org-github-normalize-string
+(defvar *org-ghpages-pygments-langs*
+  (mapcar #'org-ghpages-normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
             "befunge" "boo" "brainfuck" "c" "c++" "c#" "clojure" "coffeescript"
             "coldfusion" "common lisp" "coq" "cryptol" "cython" "d" "dart" "delphi"
@@ -115,20 +115,20 @@ if it exists; else we default to README.md"
   :menu-entry
   '(?g "Export to GitHub Flavored Markdown"
        ((?G "To temporary buffer"
-            (lambda (a s v b) (org-github-export-as-gfm a s v)))
-        (?g "To file" (lambda (a s v b) (org-github-export-to-gfm a s v)))))
+            (lambda (a s v b) (org-ghpages-export-as-gfm a s v)))
+        (?g "To file" (lambda (a s v b) (org-ghpages-export-to-gfm a s v)))))
   :translate-alist
-  '((src-block . org-github-src-block)
-    (template . org-github-template)
-    (strike-through . org-github-strike-through)
-    (italic . org-github-italic)
-    (headline . org-github-headline)))
+  '((src-block . org-ghpages-src-block)
+    (template . org-ghpages-template)
+    (strike-through . org-ghpages-strike-through)
+    (italic . org-ghpages-italic)
+    (headline . org-ghpages-headline)))
 
 ;;; Transcode 
 
-(defun org-github-template (contents info)
+(defun org-ghpages-template (contents info)
   "Return complete document string after conversion."
-  (let ((yaml-comments (if org-github-comments "true" "false"))
+  (let ((yaml-comments (if org-ghpages-comments "true" "false"))
         (frontmatter
          "---
 layout: %s
@@ -138,48 +138,48 @@ comments: %s
 categories: %s
 permalink: %s
 ---\n"))
-    (if org-github-include-yaml-front-matter
-        (concat (format frontmatter org-github-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
+    (if org-ghpages-include-yaml-front-matter
+        (concat (format frontmatter org-ghpages-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
       contents)))
 
-(defun org-github-get-pygments-lang (lang)
+(defun org-ghpages-get-pygments-lang (lang)
   "Determine whether our SRC-BLOCK data is in a language supported
 by Pygments coloring. Otherwise revert to default coloring behavior."
   (and lang
-       (let ((lang (org-github-normalize-string lang)))
+       (let ((lang (org-ghpages-normalize-string lang)))
          (cond ((string= lang "emacs-lisp") "common-lisp")
                ((string= lang "shell-script") "bash")
-               ((not (member lang *org-github-pygments-langs*)) nil)
+               ((not (member lang *org-ghpages-pygments-langs*)) nil)
                (t lang)))))
 
-(defun org-github-src-block (src-block contents info)
+(defun org-ghpages-src-block (src-block contents info)
   "Transcode a #+BEGIN_SRC block from Org to Github Pages style
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
-  (let* ((lang (org-github-get-pygments-lang (org-element-property :language src-block)))
+  (let* ((lang (org-ghpages-get-pygments-lang (org-element-property :language src-block)))
          (value (org-element-property :value src-block))
          (header (if lang
-                     (if org-github-use-src-plugin
+                     (if org-ghpages-use-src-plugin
                          (concat "{% highlight " lang " %}\n")
                        (concat "```" lang "\n"))
                    "```\n"))
          (footer (if lang
-                     (if org-github-use-src-plugin
+                     (if org-ghpages-use-src-plugin
                          "{% endhighlight %}\n"
                        "```\n")
                    "```\n")))
     (concat header value footer contents)))
 
-(defun org-github-italic (italic contents info)
+(defun org-ghpages-italic (italic contents info)
   "Transcode ITALIC object into Github Flavored Markdown format.
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (format "*%s*" contents))
 
-(defun org-github-headline (headline contents info)
+(defun org-ghpages-headline (headline contents info)
   "Transcode HEADLINE element into GitHub Flavored Markdown.
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (concat "#" (org-md-headline headline contents info)))
 
-(defun org-github-strike-through (strike-through contents info)
+(defun org-ghpages-strike-through (strike-through contents info)
   "Transcode STRIKE-THROUGH into GitHub Flavored Markdown.
 Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (format "~~%s~~" contents))
@@ -187,7 +187,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 ;;; Interactive functions
 
 ;;;###autoload
-(defun org-github-export-as-gfm
+(defun org-ghpages-export-as-gfm
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a GitHub Flavored Markdown buffer."
   
@@ -201,7 +201,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
-    (setq yaml-permalink (org-github-normalize-string yaml-title))
+    (setq yaml-permalink (org-ghpages-normalize-string yaml-title))
 
     (let* ((extension ".md")
            (subtreep
@@ -213,7 +213,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
         (with-current-buffer outbuf (set-auto-mode t))))))
 
 ;;;###autoload
-(defun org-github-export-to-gfm
+(defun org-ghpages-export-to-gfm
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to file in GitHub Flavored Markdown format"
 
@@ -227,7 +227,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
     (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
     (setq yaml-title (org-get-heading t t))
-    (setq yaml-permalink (org-github-normalize-string yaml-title))
+    (setq yaml-permalink (org-ghpages-normalize-string yaml-title))
 
     (let* ((extension ".md")
            (subtreep
@@ -235,10 +235,10 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
               (org-narrow-to-subtree)
               (buffer-string))))
       (let ((org-export-coding-system org-html-coding-system))
-        (org-export-to-file 'github-pages (org-github-get-file-name) async subtreep
+        (org-export-to-file 'github-pages (org-ghpages-get-file-name) async subtreep
                             visible-only body-only ext-plist)))))
 
 
 ;;;; End code
 
-(provide 'org-to-github)
+(provide 'org-to-ghpages)
