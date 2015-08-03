@@ -1,6 +1,8 @@
 # org-to-ghpages
 
-This is a small emacs script for exporting org-mode subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
+This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
+
+<file:///emacs1.png?raw=true>
 
 ## Usage
 
@@ -13,11 +15,11 @@ Place `org-to-ghpages.el` somewhere in your Emacs' load path, and then add the f
 
 (To see a literate example of how *I* use this, please refer to [my init file](https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts).)
 
-By default, this library can be invoked by executing C-c C-e g from within org-mode. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified `org-ghpages-post-dir` with the name of `YYYY-MM-DD-title-of-post`. 
+By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified `org-ghpages-post-dir` with smart guesses for YAML front matter data, with the file name of `YYYY-MM-DD-title-of-post.md`. 
 
 ### Custom Options
 
-`org-ghpages-post-dir` :: The directory to export posts to. By default, they will be output to your `~/Documents` directory.
+`org-ghpages-post-dir`: The directory to export posts to. By default, they will be output to your `~/Documents` directory.
 
 ```common-lisp
 (defcustom org-ghpages-post-dir (expand-file-name "~/Documents")
@@ -28,7 +30,7 @@ By default, this library can be invoked by executing C-c C-e g from within org-m
 
 ---
 
-`org-ghpages-include-yaml-front-matter` :: A boolean to determine whether you want to include YAML front matter. By default, values will include:
+`org-ghpages-include-yaml-front-matter`: A boolean to determine whether you want to include YAML front matter. By default, values will include:
 
 ```yaml
 layout: post
@@ -52,7 +54,7 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 
 ---
 
-`org-ghpages-layout` :: What the `layout` value in your YAML front matter should be. By default, it is set to "post".
+`org-ghpages-layout`: What the `layout` value in your YAML front matter should be. By default, it is set to "post".
 
 ```common-lisp
 (defcustom org-ghpages-layout "post"
@@ -63,7 +65,7 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 
 ---
 
-`org-ghpages-comments` :: A boolean to indicate whether you want to include Disqus comments. This choice is reflected in the YAML front matter.
+`org-ghpages-comments`: A boolean to indicate whether you want to include Disqus comments. This choice is reflected in the YAML front matter.
 
 ```common-lisp
 (defcustom org-ghpages-comments t
@@ -74,9 +76,9 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 
 ---
 
-`org-ghpages-use-src-plugin` :: A boolean to indicate whether you want source blocks surrounded with Pygments-style tags. 
+`org-ghpages-use-src-plugin`: A boolean to indicate whether you want source blocks surrounded with Pygments-style tags. 
 -   If set to `t` (which is the default), your source blocks will be wrapped with `{% highlight lang %} / {% endhighlight %}` tags, where the value of `lang` is taken from your `#+BEGIN_SRC` declarations.
--   If set to `nil`, it will wrap source blocks with `` ```lang / ``` `` if lang is available, and the standard `` ```/``` `` if not.
+-   If set to `nil`, it will wrap source blocks with the triple backquotes tags, including `lang` if it is available (again, taken from your `#+BEGIN_SRC` blocks.
 
 ```common-lisp
 (defcustom org-ghpages-use-src-plugin t
