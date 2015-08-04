@@ -194,6 +194,8 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (interactive)
   (save-excursion
     ;; find our first TODO state
+
+    ;; TODO need to mark TODO as done
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
 
@@ -211,6 +213,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
       (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
                       nil subtreep visible-only body-only ext-plist)))
         (with-current-buffer outbuf (set-auto-mode t))))))
+        ;; (with-current-buffer outbuf (set-mode markdown-mode))))))
 
 ;;;###autoload
 (defun org-ghpages-export-to-gfm
@@ -220,6 +223,8 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (interactive)
   (save-excursion
     ;; find our first TODO state
+
+    ;; TODO Need to mark TODO as done
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
 
