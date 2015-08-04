@@ -140,7 +140,7 @@ permalink: %s
 ---\n"))
     (if org-ghpages-include-yaml-front-matter
         (concat (format frontmatter org-ghpages-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
-      contents)))
+      (concat "# " yaml-title "\n\n" contents))))
 
 (defun org-ghpages-get-pygments-lang (lang)
   "Determine whether our SRC-BLOCK data is in a language supported
