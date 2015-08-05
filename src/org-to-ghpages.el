@@ -75,6 +75,12 @@
   :group 'org-export-ghpages
   :type 'boolean)
 
+(defcustom org-ghpages-auto-mark-as-done t
+  "if true, automatically changes TODO state to DONE state upon exporting"
+  :group 'org-export-ghpages
+  :type 'boolean)
+
+
 ;;; Helper functions
 
 (defun org-ghpages-normalize-string (str)
@@ -197,7 +203,8 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
-    (org-todo 'done)
+    (if org-ghpages-auto-mark-as-done
+        (org-todo 'done))
 
     ;; extract our YAML for creating the frontmatter
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
@@ -226,7 +233,9 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
-    (org-todo 'done)
+
+    (if org-ghpages-auto-mark-as-done
+        (org-todo 'done))
 
     ;; extract our YAML for creating the frontmatter
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
