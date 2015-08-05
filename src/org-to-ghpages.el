@@ -86,7 +86,7 @@
 if it exists; else we default to README.md"
   (if org-ghpages-include-yaml-front-matter
       (concat org-ghpages-post-dir "/" yaml-date "-" yaml-permalink ".md")
-    (concat org-ghpages-post-dir "README.md")))
+    (concat org-ghpages-post-dir "/" yaml-permalink ".md")))
 
 (defvar *org-ghpages-pygments-langs*
   (mapcar #'org-ghpages-normalize-string
