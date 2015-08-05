@@ -1,4 +1,4 @@
-# org-to-ghpages
+# org-to-ghpages README
 
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
@@ -35,7 +35,7 @@ Place `src/org-to-ghpages.el` somewhere in your Emacs' load path, and then add t
 
 By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified `org-ghpages-post-dir` with smart guesses for YAML front matter data, with the file name of `YYYY-MM-DD-title-of-post.md`. 
 
-### Custom Options
+## Custom Options
 
 `org-ghpages-post-dir`: The directory to export posts to. By default, they will be output to your `~/Documents` directory.
 
@@ -107,7 +107,7 @@ To export a `TODO` item as a GitHub Flavored Markdown file (like this `README.md
   :type 'boolean)
 ```
 
-### Sensible defaults
+## Sensible defaults
 
 Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
 
@@ -129,6 +129,14 @@ This is built on top of the `ox-md` backend, which requires `org-mode` of at lea
 ## Help!
 
 -   If you're getting nasty Table of Contents HTML output with your files, make sure you have `#+OPTIONS: toc:nil` towards the top of your org file.
+-   If ~~strikethrough~~ isn't showing up on Jekyll, make sure you edit your \_config.yml to include
+
+```yaml
+markdown: redcarpet
+redcarpet:
+  extensions: ["strikethrough"]
+```
+
 -   Other issues? Contact me [via Twitter](https://twitter.com/lambertington), or create an issue on this repo.
 
 ## License
