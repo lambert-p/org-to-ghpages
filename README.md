@@ -129,6 +129,14 @@ This is built on top of the `ox-md` backend, which requires `org-mode` of at lea
 ## Help!
 
 -   If you're getting nasty Table of Contents HTML output with your files, make sure you have `#+OPTIONS: toc:nil` towards the top of your org file.
+-   If ~~strikethrough~~ isn't showing up on Jekyll, make sure you edit your \_config.yml to include
+
+```yaml
+markdown: redcarpet
+redcarpet:
+  extensions: ["strikethrough"]
+```
+
 -   Other issues? Contact me [via Twitter](https://twitter.com/lambertington), or create an issue on this repo.
 
 ## License

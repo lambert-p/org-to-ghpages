@@ -1,3 +1,5 @@
+# Examples
+
 The following are example outputs for this export mode. You can check the `Examples` subheading in `project.org` and the equivalent `examples.md` for the corresponding GitHub Flavored Markdown export. This file was generated merely by setting `org-github-use-src-plugin` and `org-github-include-yaml-front-matter` both to `nil` before exporting (due to GitHub not supporting Pygments and not
 needing frontmatter!)
 
