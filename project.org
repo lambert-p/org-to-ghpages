@@ -3,8 +3,8 @@
 #+STARTUP: hidestars
 #+OPTIONS: toc:nil
 
-* TODO org-to-ghpages README
-  SCHEDULED: <2015-08-03 Mon>
+* DONE org-to-ghpages README
+  CLOSED: [2015-08-05 Wed 18:46] SCHEDULED: <2015-08-03 Mon>
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
 ** A Visual Guide
@@ -110,6 +110,17 @@ To export a =TODO= item as a GitHub Flavored Markdown file (like this =README.md
   :type 'boolean)
 #+END_SRC
 
+-----
+
+=org-ghpages-auto-mark-as-done=: A boolean to indicate whether exporting (either to temp buffer or directly to GitHub Flavored Markdown file should change status from TODO to DONE. By default, set to true.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom org-ghpages-auto-mark-as-done t
+    "if true, automatically changes TODO state to DONE state upon exporting"
+    :group 'org-export-ghpages
+    :type 'boolean)
+#+END_SRC
+
 ** Sensible defaults
 
 Aside from having to set up your default export path (which is used when you use =C-c C-e g g=, or manually invoke =org-ghpages-export-to-gfm=), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
@@ -159,8 +170,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-* TODO Examples
-  SCHEDULED: <2015-08-03 Mon>
+* DONE Examples
+  CLOSED: [2015-08-05 Wed 18:15] SCHEDULED: <2015-08-03 Mon>
   The following are example outputs for this export mode. You can check the =Examples= subheading in =project.org= and the equivalent =examples.md= for the corresponding GitHub Flavored Markdown export. This file was generated merely by setting =org-github-use-src-plugin= and =org-github-include-yaml-front-matter= both to =nil= before exporting (due to GitHub not supporting Pygments and not
 needing frontmatter!)
 

@@ -107,6 +107,17 @@ To export a `TODO` item as a GitHub Flavored Markdown file (like this `README.md
   :type 'boolean)
 ```
 
+---
+
+`org-ghpages-auto-mark-as-done`: A boolean to indicate whether exporting (either to temp buffer or directly to GitHub Flavored Markdown file should change status from TODO to DONE. By default, set to true.
+
+```common-lisp
+(defcustom org-ghpages-auto-mark-as-done t
+  "if true, automatically changes TODO state to DONE state upon exporting"
+  :group 'org-export-ghpages
+  :type 'boolean)
+```
+
 ## Sensible defaults
 
 Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
