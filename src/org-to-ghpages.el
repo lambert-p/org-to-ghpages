@@ -195,7 +195,6 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (save-excursion
     ;; find our first TODO state
 
-    ;; TODO need to mark TODO as done
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
 
@@ -224,9 +223,9 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
   (save-excursion
     ;; find our first TODO state
 
-    ;; TODO Need to mark TODO as done
     (while (null (org-entry-get (point) "TODO" nil t))
       (outline-up-heading 1 t))
+    (org-todo 'done)
 
     ;; extract our YAML for creating the frontmatter
     (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
