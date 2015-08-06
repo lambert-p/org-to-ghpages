@@ -143,7 +143,7 @@ date: %s
 comments: %s
 categories: %s
 permalink: %s
----\n"))
+---\n\n"))
     (if org-ghpages-include-yaml-front-matter
         (concat (format frontmatter org-ghpages-layout yaml-title yaml-date yaml-comments yaml-tags yaml-permalink) contents)
       (concat "# " yaml-title "\n\n" contents))))
