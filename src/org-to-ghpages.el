@@ -49,7 +49,8 @@
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org GitHub Flavored Markdown"
   :group 'org-export
-  :version "24.5.1")
+  :version "24.4"
+  :package-version '(Org . "8.0"))
 
 (defcustom org-ghpages-post-dir (expand-file-name "~/Documents")
   "directory to save posts"
