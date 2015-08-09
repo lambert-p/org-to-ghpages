@@ -1,9 +1,10 @@
-;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
+;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with
+;;; GitHub Pages/Jekyll
 
 ;; Copyright (C) 2015 Paul Lambert
 
-;; Author: Paul Lambert <lambertington at gmail dot com>
-;; Keywords: github, markdown, org
+;; Author: Paul Lambert <lambertington at gmail dot com> Keywords:
+;; github, markdown,org
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
 ;;; Commentary:
 ;;
 ;; This library implements a GitHub Flavored Markdown backend for the
-;; Org exporter, and is built on top of the `ox-md` backend.
+;; Org exporter, and is built on top of the `ox-md' backend.
 ;;
 ;; By default, this library can be invoked by executing C-c C-e g
 ;; from within org-mode. Its default output is designed for
