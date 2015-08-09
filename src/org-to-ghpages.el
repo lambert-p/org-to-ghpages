@@ -53,32 +53,38 @@
   :package-version '(Org . "8.0"))
 
 (defcustom org-ghpages-post-dir (expand-file-name "~/Documents")
-  "directory to save posts"
+  "Directory to save posts."
   :group 'org-export-ghpages
   :type 'directory)
 
 (defcustom org-ghpages-include-yaml-front-matter t
-  "automatically generate YAML front matter?"
+  "Automatically generate YAML front matter? Set variable
+to `nil' if not exporting to Jekyll (e.g., generating 
+project notes or a README"
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-layout "post"
-  "define each top level as a post by default"
+  "Define each top level as a post by default. Used when
+generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
 
 (defcustom org-ghpages-comments t
-  "include disqus comments by default"
+  "Include Disqus comments by default. Used when 
+generating YAML front matter."
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-use-src-plugin t
-  "if true, uses pygments-style code blocking"
+  "If true, uses pygments-style code blocking. If not 
+exporting to Pygments, e.g. generating project notes 
+or a README, set value to `nil'."
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-auto-mark-as-done t
-  "if true, automatically changes TODO state to DONE state upon exporting"
+  "If true, automatically changes TODO state to DONE state upon exporting"
   :group 'org-export-ghpages
   :type 'boolean)
 
@@ -258,3 +264,5 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 ;;;; End code
 
 (provide 'org-to-ghpages)
+
+;;; org-to-ghpages.el ends here
