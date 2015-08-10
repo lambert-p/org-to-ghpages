@@ -1,9 +1,10 @@
-;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with GitHub Pages/Jekyll
+;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with
+;;; GitHub Pages/Jekyll
 
 ;; Copyright (C) 2015 Paul Lambert
 
-;; Author: Paul Lambert <lambertington at gmail dot com>
-;; Keywords: github, markdown, org
+;; Author: Paul Lambert <lambertington at gmail dot com> Keywords:
+;; github, markdown,org
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@
 ;;; Commentary:
 ;;
 ;; This library implements a GitHub Flavored Markdown backend for the
-;; Org exporter, and is built on top of the `ox-md` backend.
+;; Org exporter, and is built on top of the `ox-md' backend.
 ;;
 ;; By default, this library can be invoked by executing C-c C-e g
 ;; from within org-mode. Its default output is designed for
@@ -48,35 +49,42 @@
   "Options for exporting org-mode files to Github Pages Markdown"
   :tag "Org GitHub Flavored Markdown"
   :group 'org-export
-  :version "24.5.1")
+  :version "24.4"
+  :package-version '(Org . "8.0"))
 
 (defcustom org-ghpages-post-dir (expand-file-name "~/Documents")
-  "directory to save posts"
+  "Directory to save posts."
   :group 'org-export-ghpages
   :type 'directory)
 
 (defcustom org-ghpages-include-yaml-front-matter t
-  "automatically generate YAML front matter?"
+  "Automatically generate YAML front matter? Set variable
+to `nil' if not exporting to Jekyll (e.g., generating 
+project notes or a README"
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-layout "post"
-  "define each top level as a post by default"
+  "Define each top level as a post by default. Used when
+generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
 
 (defcustom org-ghpages-comments t
-  "include disqus comments by default"
+  "Include Disqus comments by default. Used when 
+generating YAML front matter."
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-use-src-plugin t
-  "if true, uses pygments-style code blocking"
+  "If true, uses pygments-style code blocking. If not 
+exporting to Pygments, e.g. generating project notes 
+or a README, set value to `nil'."
   :group 'org-export-ghpages
   :type 'boolean)
 
 (defcustom org-ghpages-auto-mark-as-done t
-  "if true, automatically changes TODO state to DONE state upon exporting"
+  "If true, automatically changes TODO state to DONE state upon exporting"
   :group 'org-export-ghpages
   :type 'boolean)
 
@@ -256,3 +264,5 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 ;;;; End code
 
 (provide 'org-to-ghpages)
+
+;;; org-to-ghpages.el ends here
