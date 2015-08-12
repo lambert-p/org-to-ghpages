@@ -35,6 +35,16 @@ Place `src/org-to-ghpages.el` somewhere in your Emacs' load path, and then add t
 
 By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified `org-ghpages-post-dir` with smart guesses for YAML front matter data, with the file name of `YYYY-MM-DD-title-of-post.md`. 
 
+## Sensible defaults
+
+Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
+
+If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
+
+```common-lisp
+(setq org-ghpages-export-to-jekyll nil)
+```
+
 ## Custom Options
 
 `org-ghpages-post-dir`: The directory to export posts to. By default, they will be output to your `~/Documents` directory.
@@ -132,16 +142,6 @@ or a README, set value to `nil'.")
 (defcustom org-ghpages-auto-mark-as-done t
   "If true, automatically changes TODO state to DONE state upon exporting")
 
-```
-
-## Sensible defaults
-
-Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
-
-If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
-
-```common-lisp
-(setq org-ghpages-export-to-jekyll nil)
 ```
 
 ## Examples

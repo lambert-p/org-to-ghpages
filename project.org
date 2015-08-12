@@ -37,7 +37,15 @@ Place =src/org-to-ghpages.el= somewhere in your Emacs' load path, and then add t
 (To see a literate example of how I use this, please refer to [[https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts][my init file]].)
 
 By default, this library can be invoked by executing =C-c C-e g= from within org-mode on a =TODO= list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified =org-ghpages-post-dir= with smart guesses for YAML front matter data, with the file name of =YYYY-MM-DD-title-of-post.md=. 
+** Sensible defaults
 
+Aside from having to set up your default export path (which is used when you use =C-c C-e g g=, or manually invoke =org-ghpages-export-to-gfm=), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
+
+If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-ghpages-export-to-jekyll nil)
+#+END_SRC
 
 ** Custom Options
 =org-ghpages-post-dir=: The directory to export posts to. By default, they will be output to your =~/Documents= directory.
@@ -137,16 +145,6 @@ This is set to true by default.
 
 #+END_SRC
 
-** Sensible defaults
-
-Aside from having to set up your default export path (which is used when you use =C-c C-e g g=, or manually invoke =org-ghpages-export-to-gfm=), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
-
-If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
-
-#+BEGIN_SRC emacs-lisp
-  (setq org-ghpages-export-to-jekyll nil)
-#+END_SRC
-
 ** Examples
 
 To see a practical example of how this is used, please look at =project.org= which is in this repository. I generated both the =README.md= and =examples.md= files aginst this file.
@@ -183,7 +181,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 
 * DONE Examples
   CLOSED: [2015-08-08 Sat 23:00] SCHEDULED: <2015-08-10 Mon>
