@@ -127,7 +127,7 @@ generating YAML front matter.")
 -   If set to `nil`, it will wrap source blocks with the triple backquotes tags, including `lang` if it is available (again, taken from your `#+BEGIN_SRC` blocks).
 
 ```common-lisp
-(defcustom org-ghpages-use-src-plugin t
+(defvar org-ghpages-use-src-plugin t
   "If true, uses pygments-style code blocking. If not 
 exporting to Pygments, e.g. generating project notes 
 or a README, set value to `nil'.")
@@ -139,7 +139,7 @@ or a README, set value to `nil'.")
 `org-ghpages-auto-mark-as-done`: A boolean to indicate whether exporting (either to temp buffer or directly to GitHub Flavored Markdown file should change status from TODO to DONE. By default, set to true.
 
 ```common-lisp
-(defcustom org-ghpages-auto-mark-as-done t
+(defvar org-ghpages-auto-mark-as-done t
   "If true, automatically changes TODO state to DONE state upon exporting")
 
 ```

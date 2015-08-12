@@ -81,12 +81,12 @@ project notes or a README")
   "Include Disqus comments by default. Used when 
 generating YAML front matter.")
 
-(defcustom org-ghpages-use-src-plugin t
+(defvar org-ghpages-use-src-plugin t
   "If true, uses pygments-style code blocking. If not 
 exporting to Pygments, e.g. generating project notes 
 or a README, set value to `nil'.")
 
-(defcustom org-ghpages-auto-mark-as-done t
+(defvar org-ghpages-auto-mark-as-done t
   "If true, automatically changes TODO state to DONE state upon exporting")
 
 
