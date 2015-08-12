@@ -35,6 +35,16 @@ Place `src/org-to-ghpages.el` somewhere in your Emacs' load path, and then add t
 
 By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified `org-ghpages-post-dir` with smart guesses for YAML front matter data, with the file name of `YYYY-MM-DD-title-of-post.md`. 
 
+## Sensible defaults
+
+Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
+
+If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
+
+```common-lisp
+(setq org-ghpages-export-to-jekyll nil)
+```
+
 ## Custom Options
 
 `org-ghpages-post-dir`: The directory to export posts to. By default, they will be output to your `~/Documents` directory.
@@ -44,6 +54,23 @@ By default, this library can be invoked by executing `C-c C-e g` from within org
   "directory to save posts"
   :group 'org-export-ghpages
   :type 'directory)
+```
+
+---
+
+`org-ghpages-export-to-jekyll`: Automatically sets options for exporting to Jekyll, such as including YAML frontmatter and Pygments-style source code coloring. It is set to true by default. 
+
+If you plan on exporting just to straight GitHub Flavored Markdown, such as for generating README files or project documentation, set this variable to `nil` (e.g., `M-x [RET] set-variable [RET] org-ghpages-export-to-jekyll [RET] nil [RET]`), or specify it in your init file.
+
+```common-lisp
+(defcustom org-ghpages-export-to-jekyll t
+  "By default, export will be configured for use with 
+Jekyll and the gh-pages gem. In particular, include
+YAML front matter by default and use Pygments style 
+highlighting"
+  :group 'org-export-ghpages
+  :type 'boolean)
+
 ```
 
 ---
@@ -59,15 +86,14 @@ categories: tags taken from org-mode
 permalink: the-todo-text
 ```
 
-If you want to export just a GitHub Flavored Markdown post, i.e. a README, set this value to nil.
-
-`M-x set-variable [RET] org-ghpages-include-yaml-front-matter [RET] nil [RET]`
+This is set to true by default.
 
 ```common-lisp
-(defcustom org-ghpages-include-yaml-front-matter t
-  "automatically generate YAML front matter?"
-  :group 'org-export-ghpages
-  :type 'boolean)
+(defvar org-ghpages-include-yaml-front-matter t
+  "Automatically generate YAML front matter? Set variable
+to `nil' if not exporting to Jekyll (e.g., generating 
+project notes or a README")
+
 ```
 
 ---
@@ -76,9 +102,11 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 
 ```common-lisp
 (defcustom org-ghpages-layout "post"
-  "define each top level as a post by default"
+  "Define each top level as a post by default. Used when
+generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
+
 ```
 
 ---
@@ -86,10 +114,10 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 `org-ghpages-comments`: A boolean to indicate whether you want to include Disqus comments. This choice is reflected in the YAML front matter.
 
 ```common-lisp
-(defcustom org-ghpages-comments t
-  "include disqus comments by default"
-  :group 'org-export-ghpages
-  :type 'boolean)
+(defvar org-ghpages-comments t
+  "Include Disqus comments by default. Used when 
+generating YAML front matter.")
+
 ```
 
 ---
@@ -98,13 +126,12 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 -   If set to `t` (which is the default), your source blocks will be wrapped with `{% highlight lang %} / {% endhighlight %}` tags, where the value of `lang` is taken from your `#+BEGIN_SRC` declarations.
 -   If set to `nil`, it will wrap source blocks with the triple backquotes tags, including `lang` if it is available (again, taken from your `#+BEGIN_SRC` blocks).
 
-To export a `TODO` item as a GitHub Flavored Markdown file (like this `README.md` for example!), you will want to set this to nil (e.g., `M-x set-variable [RET] org-ghpages-use-src-plugin [RET] nil`).
-
 ```common-lisp
 (defcustom org-ghpages-use-src-plugin t
-  "if true, uses pygments-style code blocking"
-  :group 'org-export-ghpages
-  :type 'boolean)
+  "If true, uses pygments-style code blocking. If not 
+exporting to Pygments, e.g. generating project notes 
+or a README, set value to `nil'.")
+
 ```
 
 ---
@@ -113,20 +140,8 @@ To export a `TODO` item as a GitHub Flavored Markdown file (like this `README.md
 
 ```common-lisp
 (defcustom org-ghpages-auto-mark-as-done t
-  "if true, automatically changes TODO state to DONE state upon exporting"
-  :group 'org-export-ghpages
-  :type 'boolean)
-```
+  "If true, automatically changes TODO state to DONE state upon exporting")
 
-## Sensible defaults
-
-Aside from having to set up your default export path (which is used when you use `C-c C-e g g`, or manually invoke `org-ghpages-export-to-gfm`), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
-
-If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
-
-```common-lisp
-(setq org-ghpages-include-yaml-front-matter nil)
-(setq org-ghpages-use-src-block-plugin nil)
 ```
 
 ## Examples
