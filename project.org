@@ -51,6 +51,22 @@ By default, this library can be invoked by executing =C-c C-e g= from within org
 
 -----
 
+=org-ghpages-export-to-jekyll=: Automatically sets options for exporting to Jekyll, such as including YAML frontmatter and Pygments-style source code coloring. It is set to true by default. 
+
+If you plan on exporting just to straight GitHub Flavored Markdown, such as for generating README files or project documentation, set this variable to =nil= (e.g., =M-x [RET] set-variable [RET] org-ghpages-export-to-jekyll [RET] nil [RET]=), or specify it in your init file.
+
+#+BEGIN_SRC emacs-lisp
+  (defcustom org-ghpages-export-to-jekyll t
+    "By default, export will be configured for use with 
+  Jekyll and the gh-pages gem. In particular, include
+  YAML front matter by default and use Pygments style 
+  highlighting"
+    :group 'org-export-ghpages
+    :type 'boolean)
+
+#+END_SRC
+
+-----
 =org-ghpages-include-yaml-front-matter=: A boolean to determine whether you want to include YAML front matter. By default, values will include:
 
 #+BEGIN_SRC yaml
@@ -62,15 +78,14 @@ By default, this library can be invoked by executing =C-c C-e g= from within org
   permalink: the-todo-text
 #+END_SRC
 
-If you want to export just a GitHub Flavored Markdown post, i.e. a README, set this value to nil.
-
-=M-x set-variable [RET] org-ghpages-include-yaml-front-matter [RET] nil [RET]=
+This is set to true by default.
 
 #+BEGIN_SRC emacs-lisp
-(defcustom org-ghpages-include-yaml-front-matter t
-  "automatically generate YAML front matter?"
-  :group 'org-export-ghpages
-  :type 'boolean)
+  (defvar org-ghpages-include-yaml-front-matter t
+    "Automatically generate YAML front matter? Set variable
+  to `nil' if not exporting to Jekyll (e.g., generating 
+  project notes or a README")
+
 #+END_SRC 
 
 -----
@@ -78,10 +93,12 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 =org-ghpages-layout=: What the =layout= value in your YAML front matter should be. By default, it is set to "post".
 
 #+BEGIN_SRC emacs-lisp
-(defcustom org-ghpages-layout "post"
-  "define each top level as a post by default"
-  :group 'org-export-ghpages
-  :type 'string)
+  (defcustom org-ghpages-layout "post"
+    "Define each top level as a post by default. Used when
+  generating YAML front matter."
+    :group 'org-export-ghpages
+    :type 'string)
+
 #+END_SRC
 
 ----- 
@@ -89,10 +106,10 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 =org-ghpages-comments=: A boolean to indicate whether you want to include Disqus comments. This choice is reflected in the YAML front matter.
 
 #+BEGIN_SRC emacs-lisp
-(defcustom org-ghpages-comments t
-  "include disqus comments by default"
-  :group 'org-export-ghpages
-  :type 'boolean)
+  (defvar org-ghpages-comments t
+    "Include Disqus comments by default. Used when 
+  generating YAML front matter.")
+
 #+END_SRC
 
 -----
@@ -101,13 +118,13 @@ If you want to export just a GitHub Flavored Markdown post, i.e. a README, set t
 + If set to =t= (which is the default), your source blocks will be wrapped with ={% highlight lang %} / {% endhighlight %}= tags, where the value of =lang= is taken from your =#+BEGIN_SRC= declarations. 
 + If set to =nil=, it will wrap source blocks with the triple backquotes tags, including =lang= if it is available (again, taken from your =#+BEGIN_SRC= blocks).
   
-To export a =TODO= item as a GitHub Flavored Markdown file (like this =README.md= for example!), you will want to set this to nil (e.g., =M-x set-variable [RET] org-ghpages-use-src-plugin [RET] nil=).
  
 #+BEGIN_SRC emacs-lisp
-(defcustom org-ghpages-use-src-plugin t
-  "if true, uses pygments-style code blocking"
-  :group 'org-export-ghpages
-  :type 'boolean)
+  (defcustom org-ghpages-use-src-plugin t
+    "If true, uses pygments-style code blocking. If not 
+  exporting to Pygments, e.g. generating project notes 
+  or a README, set value to `nil'.")
+
 #+END_SRC
 
 -----
@@ -116,9 +133,8 @@ To export a =TODO= item as a GitHub Flavored Markdown file (like this =README.md
 
 #+BEGIN_SRC emacs-lisp
   (defcustom org-ghpages-auto-mark-as-done t
-    "if true, automatically changes TODO state to DONE state upon exporting"
-    :group 'org-export-ghpages
-    :type 'boolean)
+    "If true, automatically changes TODO state to DONE state upon exporting")
+
 #+END_SRC
 
 ** Sensible defaults
@@ -128,8 +144,7 @@ Aside from having to set up your default export path (which is used when you use
 If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-ghpages-include-yaml-front-matter nil)
-  (setq org-ghpages-use-src-block-plugin nil)
+  (setq org-ghpages-export-to-jekyll nil)
 #+END_SRC
 
 ** Examples
