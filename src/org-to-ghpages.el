@@ -57,37 +57,33 @@
   :group 'org-export-ghpages
   :type 'directory)
 
-(defcustom org-ghpages-export-to-jekyll t
-  "By default, export will be configured for use with 
-Jekyll and the gh-pages gem. In particular, include
-YAML front matter by default and use Pygments style 
-highlighting"
-  :group 'org-export-ghpages
-  :type 'boolean)
-
 (defcustom org-ghpages-layout "post"
   "Define each top level as a post by default. Used when
 generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
 
+(defcustom org-ghpages-comments t
+  "Include Disqus comments by default. Used when 
+generating YAML front matter."
+  :group 'org-export-ghpages
+  :type 'boolean)
+
+(defcustom org-ghpages-auto-mark-as-done t
+  "If true, automatically changes TODO state to DONE state upon exporting"
+  :group 'org-export-ghpages
+  :type 'boolean)
+
 (defvar org-ghpages-include-yaml-front-matter t
   "Automatically generate YAML front matter? Set variable
 to `nil' if not exporting to Jekyll (e.g., generating 
 project notes or a README")
-
-
-(defvar org-ghpages-comments t
-  "Include Disqus comments by default. Used when 
-generating YAML front matter.")
 
 (defvar org-ghpages-use-src-plugin t
   "If true, uses pygments-style code blocking. If not 
 exporting to Pygments, e.g. generating project notes 
 or a README, set value to `nil'.")
 
-(defvar org-ghpages-auto-mark-as-done t
-  "If true, automatically changes TODO state to DONE state upon exporting")
 
 
 ;;; Helper functions
