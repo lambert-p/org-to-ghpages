@@ -64,23 +64,6 @@ Essentially, everything should work fine out of the box.
 
 ---
 
-`org-ghpages-export-to-jekyll`: Automatically sets options for exporting to Jekyll, such as including YAML frontmatter and Pygments-style source code coloring. It is set to true by default. 
-
-If you plan on exporting just to straight GitHub Flavored Markdown, such as for generating README files or project documentation, set this variable to `nil` (e.g., `M-x [RET] set-variable [RET] org-ghpages-export-to-jekyll [RET] nil [RET]`), or specify it in your init file.
-
-```common-lisp
-(defcustom org-ghpages-export-to-jekyll t
-  "By default, export will be configured for use with 
-Jekyll and the gh-pages gem. In particular, include
-YAML front matter by default and use Pygments style 
-highlighting"
-  :group 'org-export-ghpages
-  :type 'boolean)
-
-```
-
----
-
 `org-ghpages-layout`: What the `layout` value in your YAML front matter should be. By default, it is set to "post".
 
 ```common-lisp
@@ -89,7 +72,6 @@ highlighting"
 generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
-
 ```
 
 ---
@@ -97,10 +79,11 @@ generating YAML front matter."
 `org-ghpages-comments`: A boolean to indicate whether you want to include Disqus comments. This choice is reflected in the YAML front matter.
 
 ```common-lisp
-(defvar org-ghpages-comments t
+(defcustom org-ghpages-comments t
   "Include Disqus comments by default. Used when 
-generating YAML front matter.")
-
+generating YAML front matter."
+  :group 'org-export-ghpages
+  :type 'boolean)
 ```
 
 ---
@@ -108,14 +91,15 @@ generating YAML front matter.")
 `org-ghpages-auto-mark-as-done`: A boolean to indicate whether exporting (either to temp buffer or directly to GitHub Flavored Markdown file should change status from TODO to DONE. By default, set to true.
 
 ```common-lisp
-(defvar org-ghpages-auto-mark-as-done t
-  "If true, automatically changes TODO state to DONE state upon exporting")
-
+(defcustom org-ghpages-auto-mark-as-done t
+  "If true, automatically changes TODO state to DONE state upon exporting"
+  :group 'org-export-ghpages
+  :type 'boolean)
 ```
 
 ## Examples
 
-To see a practical example of how this is used, please look at `project.org` which is in this repository. I generated both the `README.md` and `examples.md` files aginst this file.
+To see a practical example of how this is used, please look at `project.org` which is in this repository. I generated both the `README.md` and `Examples.md` files aginst this file.
 
 ## Requirements
 
