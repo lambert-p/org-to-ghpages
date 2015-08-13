@@ -14,12 +14,12 @@ Let's say we have all of our blog posts as =TODO= items in an org file:
 This has practical value, as we can get automatic reminders (using org-agenda) about writing and quickly refactor drafts:
 [[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs2.png]]
 
-Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! We can either use =M-x org-to-ghposts-as-gfm= or use the exporting menu by hitting =C-c C-e g G= to put it in a temp buffer...
+Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! We can either use =M-x org-to-ghposts-as-gfm= or use the exporting menu by hitting =C-c C-e g J= to put it in a temp buffer...
 [[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs3.png]]
 
 (An astute viewer will notice that the YAML front matter has been automatically filled out, with the publishing date being the =SCHEDULED= date, the categories being taken from org-mode tags, and the permalink being the title of the post in a Web-friendly way.)
 
-Or we can just hit =C-c C-e g g= (alternatively, =M-x org-ghpages-export-to-gfm=) to export it directly to our blog (assuming we've set up our default directory properly):
+Or we can just hit =C-c C-e g j= (alternatively, =M-x org-ghpages-export-to-gfm=) to export it directly to our blog (assuming we've set up our default directory properly):
 [[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs4.png]]
 
 And bam, that's all. From here you can run your blog locally to make sure everything's peachy, or just =git push= off to victory!
@@ -36,16 +36,23 @@ Place =src/org-to-ghpages.el= somewhere in your Emacs' load path, and then add t
 
 (To see a literate example of how I use this, please refer to [[https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts][my init file]].)
 
-By default, this library can be invoked by executing =C-c C-e g= from within org-mode on a =TODO= list item. Its default output is designed for GitHub Pages blogs, built upon Jekyll. Namely, it outputs a GitHub Flavored Markdown file to your specified =org-ghpages-post-dir= with smart guesses for YAML front matter data, with the file name of =YYYY-MM-DD-title-of-post.md=. 
+By default, this library can be invoked by executing =C-c C-e g= from within org-mode on a =TODO= list item. 
+
+This extension supports both Jekyll posts using the =gh-pages= gem and =Pygments= extension, and exporting plain GitHub Flavored Markdown for creating project documentation.
+
+When exporting as Jekyll, the file will automatically be named =YYYY-MM-DD-title-of-post.md= and placed within your specified post directory. It will also include automatically generated YAML front matter.
+
+When exporting as GitHub Flavored Markdown, the file will be named =title-of-post.md= and use standard triple-backtick source highlighting.
+
 ** Sensible defaults
 
-Aside from having to set up your default export path (which is used when you use =C-c C-e g g=, or manually invoke =org-ghpages-export-to-gfm=), all of the default settings will work for exporting Jekyll/gh-pages blog posts. 
+By default, the only variable that needs to be set is =org-ghpages-post-dir= -- everything else will be automatically handled for you. 
 
-If you're trying to just export to GitHub Flavored Markdown for use in GitHub Pages (such as creating READMEs for projects), please use:
+When exporting as Jekyll, YAML frontmatter will be prepended to the actual post data, and include =title=, =layout=, =date=, =comments=, =categories=, and =permalink= attributes. The =date= data is acquired from your org-agenda scheduled date. Further, Pygments-style source hightlighting will be generated, using the lang specified from your org-mode =#+BEGIN_SRC= blocks. 
 
-#+BEGIN_SRC emacs-lisp
-  (setq org-ghpages-export-to-jekyll nil)
-#+END_SRC
+When exporting as GitHub Flavored Markdown, merely the post itself will be exported, using the appropriate triple-backtick source hightlighting scheme. Again, the lang will be specified from your org-mode =#+BEGIN_SRC= blocks.
+
+Essentially, everything should work fine out of the box.
 
 ** Custom Options
 =org-ghpages-post-dir=: The directory to export posts to. By default, they will be output to your =~/Documents= directory.
@@ -75,28 +82,6 @@ If you plan on exporting just to straight GitHub Flavored Markdown, such as for 
 #+END_SRC
 
 -----
-=org-ghpages-include-yaml-front-matter=: A boolean to determine whether you want to include YAML front matter. By default, values will include:
-
-#+BEGIN_SRC yaml
-  layout: post
-  title: The TODO Text
-  date: date specified by the `Scheduled` agenda date for this TODO item
-  comments: true
-  categories: tags taken from org-mode
-  permalink: the-todo-text
-#+END_SRC
-
-This is set to true by default.
-
-#+BEGIN_SRC emacs-lisp
-  (defvar org-ghpages-include-yaml-front-matter t
-    "Automatically generate YAML front matter? Set variable
-  to `nil' if not exporting to Jekyll (e.g., generating 
-  project notes or a README")
-
-#+END_SRC 
-
------
 
 =org-ghpages-layout=: What the =layout= value in your YAML front matter should be. By default, it is set to "post".
 
@@ -117,21 +102,6 @@ This is set to true by default.
   (defvar org-ghpages-comments t
     "Include Disqus comments by default. Used when 
   generating YAML front matter.")
-
-#+END_SRC
-
------
-
-=org-ghpages-use-src-plugin=: A boolean to indicate whether you want source blocks surrounded with Pygments-style tags. 
-+ If set to =t= (which is the default), your source blocks will be wrapped with ={% highlight lang %} / {% endhighlight %}= tags, where the value of =lang= is taken from your =#+BEGIN_SRC= declarations. 
-+ If set to =nil=, it will wrap source blocks with the triple backquotes tags, including =lang= if it is available (again, taken from your =#+BEGIN_SRC= blocks).
-  
- 
-#+BEGIN_SRC emacs-lisp
-  (defvar org-ghpages-use-src-plugin t
-    "If true, uses pygments-style code blocking. If not 
-  exporting to Pygments, e.g. generating project notes 
-  or a README, set value to `nil'.")
 
 #+END_SRC
 
