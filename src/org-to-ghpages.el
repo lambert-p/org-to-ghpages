@@ -103,16 +103,6 @@ if it exists; else we default to README.md"
       (concat org-ghpages-post-dir "/" yaml-date "-" yaml-permalink ".md")
     (concat org-ghpages-post-dir "/" yaml-permalink ".md")))
 
-(defun org-ghpages-set-export-mode ()
-    "Properly sets variables up based on whether the user wishes
-to export to Jekyll (include YAML front matter by default and 
-Pygments styling) or strict GitHub Flavored Markdown"
-  (if org-ghpages-export-to-jekyll
-      (setq org-ghpages-include-yaml-front-matter t
-            org-ghpages-use-src-plugin t)
-    (setq org-ghpages-include-yaml-front-matter nil
-          org-ghpages-use-src-plugin nil)))
-
 (defvar *org-ghpages-pygments-langs*
   (mapcar #'org-ghpages-normalize-string
           '("actionscript" "ada" "antlr" "applescript" "assembly" "asymptote" "awk"
@@ -139,9 +129,12 @@ Pygments styling) or strict GitHub Flavored Markdown"
   :export-block '("MD" "GITHUB")
   :menu-entry
   '(?g "Export to GitHub Flavored Markdown"
-       ((?G "To temporary buffer"
+       ((?G "To temporary buffer as GFM"
             (lambda (a s v b) (org-ghpages-export-as-gfm a s v)))
-        (?g "To file" (lambda (a s v b) (org-ghpages-export-to-gfm a s v)))))
+        (?g "To file as GFM" (lambda (a s v b) (org-ghpages-export-to-gfm a s v)))
+        (?J "To temporary buffer as Jekyll"
+            (lambda (a s v b) (org-ghpages-export-as-jekyll a s v)))
+        (?j "To file as Jekyll" (lambda (a s v b) (org-ghpages-export-to-jekyll a s v)))))
   :translate-alist
   '((src-block . org-ghpages-src-block)
     (template . org-ghpages-template)
@@ -212,12 +205,11 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 ;;; Interactive functions
 
 ;;;###autoload
-(defun org-ghpages-export-as-gfm
+(defun org-ghpages-export-as-jekyll
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a GitHub Flavored Markdown buffer."
   
   (interactive)
-  (org-ghpages-set-export-mode)
   (save-excursion
     ;; find our first TODO state
 
@@ -240,15 +232,81 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
       (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
                       nil subtreep visible-only body-only ext-plist)))
         (with-current-buffer outbuf (set-auto-mode t))))))
-        ;; (with-current-buffer outbuf (set-mode markdown-mode))))))
+;; (with-current-buffer outbuf (set-mode markdown-mode))))))
 
 ;;;###autoload
-(defun org-ghpages-export-to-gfm
+(defun org-ghpages-export-to-jekyll
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to file in GitHub Flavored Markdown format"
 
   (interactive)
-  (org-ghpages-set-export-mode)
+  (save-excursion
+    ;; find our first TODO state
+
+    (while (null (org-entry-get (point) "TODO" nil t))
+      (outline-up-heading 1 t))
+
+    (if org-ghpages-auto-mark-as-done
+        (org-todo 'done))
+
+    ;; extract our YAML for creating the frontmatter
+    (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
+    (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
+    (setq yaml-title (org-get-heading t t))
+    (setq yaml-permalink (org-ghpages-normalize-string yaml-title))
+
+    (let* ((extension ".md")
+           (subtreep
+            (save-restriction
+              (org-narrow-to-subtree)
+              (buffer-string))))
+      (let ((org-export-coding-system org-html-coding-system))
+        (org-export-to-file 'github-pages (org-ghpages-get-file-name) async subtreep
+                            visible-only body-only ext-plist)))))
+
+
+ ;;;###autoload
+(defun org-ghpages-export-as-gfm
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to a GitHub Flavored Markdown buffer."
+
+  (setq org-ghpages-use-src-plugin nil
+        org-ghpages-include-yaml-front-matter nil)
+
+  (interactive)
+  (save-excursion
+    ;; find our first TODO state
+
+    (while (null (org-entry-get (point) "TODO" nil t))
+      (outline-up-heading 1 t))
+    (if org-ghpages-auto-mark-as-done
+        (org-todo 'done))
+
+    ;; extract our YAML for creating the frontmatter
+    (setq yaml-date (format-time-string "%Y-%m-%d" (org-get-scheduled-time (point) nil)))
+    (setq yaml-tags (mapconcat 'identity (org-get-tags-at) " "))
+    (setq yaml-title (org-get-heading t t))
+    (setq yaml-permalink (org-ghpages-normalize-string yaml-title))
+
+    (let* ((extension ".md")
+           (subtreep
+            (save-restriction
+              (org-narrow-to-subtree)
+              (buffer-string))))
+      (let ((outbuf (org-export-to-buffer 'github-pages "*Org Github Pages Export*"
+                      nil subtreep visible-only body-only ext-plist)))
+        (with-current-buffer outbuf (set-auto-mode t))))))
+;; (with-current-buffer outbuf (set-mode markdown-mode))))))
+
+ ;;;###autoload
+(defun org-ghpages-export-to-gfm
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to file in GitHub Flavored Markdown format"
+
+  (setq org-ghpages-use-src-plugin nil
+        org-ghpages-include-yaml-front-matter nil)
+
+  (interactive)
   (save-excursion
     ;; find our first TODO state
 
