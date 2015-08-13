@@ -129,10 +129,10 @@ if it exists; else we default to README.md"
   :export-block '("MD" "GITHUB")
   :menu-entry
   '(?g "Export to GitHub Flavored Markdown"
-       ((?G "To temporary buffer as GFM"
+       ((?G "As GFM buffer"
             (lambda (a s v b) (org-ghpages-export-as-gfm a s v)))
         (?g "To file as GFM" (lambda (a s v b) (org-ghpages-export-to-gfm a s v)))
-        (?J "To temporary buffer as Jekyll"
+        (?J "As Jekyll buffer"
             (lambda (a s v b) (org-ghpages-export-as-jekyll a s v)))
         (?j "To file as Jekyll" (lambda (a s v b) (org-ghpages-export-to-jekyll a s v)))))
   :translate-alist
