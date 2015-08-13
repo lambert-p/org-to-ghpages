@@ -208,6 +208,9 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 (defun org-ghpages-export-as-jekyll
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a GitHub Flavored Markdown buffer."
+
+  (setq org-ghpages-use-src-plugin t
+        org-ghpages-include-yaml-front-matter t)
   
   (interactive)
   (save-excursion
@@ -238,6 +241,9 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 (defun org-ghpages-export-to-jekyll
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to file in GitHub Flavored Markdown format"
+
+  (setq org-ghpages-use-src-plugin t
+        org-ghpages-include-yaml-front-matter t)
 
   (interactive)
   (save-excursion
