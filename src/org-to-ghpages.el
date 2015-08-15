@@ -63,6 +63,12 @@ generating YAML front matter."
   :group 'org-export-ghpages
   :type 'string)
 
+;; (defcustom org-ghpages-use-date-in-permalink nil
+;;   "Make a post's default permalink be YYYY-MM-DD-title-of-post.md
+;; By default, set to `nil'."
+;;   :group 'org-export-ghpages
+;;   :type 'boolean)
+
 (defcustom org-ghpages-comments t
   "Include Disqus comments by default. Used when 
 generating YAML front matter."
@@ -98,6 +104,11 @@ if it exists; else we default to README.md"
   (if org-ghpages-include-yaml-front-matter
       (concat org-ghpages-post-dir "/" yaml-date "-" yaml-permalink ".md")
     (concat org-ghpages-post-dir "/" yaml-permalink ".md")))
+
+;; (defun org-ghpages-assemble-permalink ()
+;;   "Returns the proper permalink for YAML front matter, depending on the
+;; user configured variable `org-ghpages-use-date-in-permalink'"
+;;   )
 
 (defvar *org-ghpages-pygments-langs*
   (mapcar #'org-ghpages-normalize-string
