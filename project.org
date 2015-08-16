@@ -7,25 +7,6 @@
   CLOSED: [2015-08-08 Sat 22:59] SCHEDULED: <2015-08-10 Mon>
 This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
 
-** A Visual Guide
-Let's say we have all of our blog posts as =TODO= items in an org file: 
-[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs1.png]]
-
-This has practical value, as we can get automatic reminders (using org-agenda) about writing and quickly refactor drafts:
-[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs2.png]]
-
-Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! We can either use =M-x org-to-ghposts-as-gfm= or use the exporting menu by hitting =C-c C-e g J= to put it in a temp buffer...
-[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs3.png]]
-
-(An astute viewer will notice that the YAML front matter has been automatically filled out, with the publishing date being the =SCHEDULED= date, the categories being taken from org-mode tags, and the permalink being the title of the post in a Web-friendly way.)
-
-Or we can just hit =C-c C-e g j= (alternatively, =M-x org-ghpages-export-to-gfm=) to export it directly to our blog (assuming we've set up our default directory properly):
-[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs4.png]]
-
-And bam, that's all. From here you can run your blog locally to make sure everything's peachy, or just =git push= off to victory!
-
-Easy peasy.
-
 ** Quick Start
 Place =src/org-to-ghpages.el= somewhere in your Emacs' load path, and then add the following lines to your init.el:
 
@@ -43,6 +24,27 @@ This extension supports both Jekyll posts using the =gh-pages= gem and =Pygments
 When exporting as Jekyll, the file will automatically be named =YYYY-MM-DD-title-of-post.md= and placed within your specified post directory. It will also include automatically generated YAML front matter.
 
 When exporting as GitHub Flavored Markdown, the file will be named =title-of-post.md= and use standard triple-backtick source highlighting.
+
+** A Visual Guide
+Let's say we have all of our blog posts as =TODO= items in an org file: 
+[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs1.png]]
+
+This has practical value, as we can get automatic reminders (using org-agenda) about writing and quickly refactor drafts:
+[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs2.png]]
+
+Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! 
+
+Access the org-mode export menu (by default, =C-c C-e=) and selecting the /Export to GitHub Flavored Markdown/ section by hitting =g=. We can put this in a temp buffer by now hitting =J= (or, alternatively, directly call =M-x org-ghpages-export-as-jekyll=):
+[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs3.png]]
+
+(An astute viewer will notice that the YAML front matter has been automatically filled out, with the publishing date being the =SCHEDULED= date, the categories being taken from org-mode tags, and the permalink being the title of the post in a Web-friendly way.)
+
+Or we can just hit =C-c C-e g j= (alternatively, =M-x org-ghpages-export-to-jekyll=) to export it directly to our blog (assuming we've set up our default directory properly):
+[[file:https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs4.png]]
+
+And bam, that's all. From here you can run your blog locally to make sure everything's peachy, or just =git push= off to victory!
+
+Easy peasy.
 
 ** Sensible defaults
 
