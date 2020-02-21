@@ -1,11 +1,11 @@
 ;;; org-to-ghpages.el - GitHub Flavored Markdown Export for use with
 ;;; GitHub Pages/Jekyll
 
-;; Copyright (C) 2015 Paul Lambert
+;; Copyright (C) 2020 Paul Lambert
 
-;; Author: Paul Lambert <lambertington at gmail dot com> Keywords:
+;; Author: Paul Lambert <paul dot lambert at linux dot com> Keywords:
 ;; github, markdown,org
-;; Version: 0.1
+;; Version: 0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 ;;
 ;; For more complete documentation, including usage, please refer to
 ;; either the included README.md or the project's repository, located
-;; at https://github.com/lambertington/org-to-ghpages/
+;; at https://github.com/lambert-p/org-to-ghpages/
 
 ;;;; Code:
 
@@ -70,7 +70,7 @@ generating YAML front matter."
 ;;   :type 'boolean)
 
 (defcustom org-ghpages-comments t
-  "Include Disqus comments by default. Used when 
+  "Include Disqus comments by default. Used when
 generating YAML front matter."
   :group 'org-export-ghpages
   :type 'boolean)
@@ -82,12 +82,12 @@ generating YAML front matter."
 
 (defvar org-ghpages-include-yaml-front-matter t
   "Automatically generate YAML front matter? Set variable
-to `nil' if not exporting to Jekyll (e.g., generating 
+to `nil' if not exporting to Jekyll (e.g., generating
 project notes or a README")
 
 (defvar org-ghpages-use-src-plugin t
-  "If true, uses pygments-style code blocking. If not 
-exporting to Pygments, e.g. generating project notes 
+  "If true, uses pygments-style code blocking. If not
+exporting to Pygments, e.g. generating project notes
 or a README, set value to `nil'.")
 
 
@@ -133,7 +133,8 @@ if it exists; else we default to README.md"
 ;;; Define back-end
 
 (org-export-define-derived-backend 'github-pages 'md
-  :export-block '("MD" "GITHUB")
+  ; :export-block '("MD" "GITHUB")
+  :translate-alist ''("MD" . "GITHUB")
   :menu-entry
   '(?g "Export to GitHub Flavored Markdown"
        ((?G "As GFM buffer"
@@ -149,7 +150,7 @@ if it exists; else we default to README.md"
     (italic . org-ghpages-italic)
     (headline . org-ghpages-headline)))
 
-;;; Transcode 
+;;; Transcode
 
 (defun org-ghpages-template (contents info)
   "Return complete document string after conversion."
@@ -218,7 +219,7 @@ Please consult ./lisp/org/ox-md.el.gz for additional documentation."
 
   (setq org-ghpages-use-src-plugin t
         org-ghpages-include-yaml-front-matter t)
-  
+
   (interactive)
   (save-excursion
     ;; find our first TODO state
