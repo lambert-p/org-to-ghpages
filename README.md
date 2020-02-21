@@ -1,6 +1,6 @@
 # org-to-ghpages README
 
-This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project. 
+This is a small emacs script for exporting org-mode TODO list subtrees to GitHub Flavored Markdown for usage on a Jekyll-powered blog or GitHub project.
 
 ## Quick Start
 
@@ -13,7 +13,7 @@ Place `src/org-to-ghpages.el` somewhere in your Emacs' load path, and then add t
 
 (To see a literate example of how I use this, please refer to [my init file](https://github.com/lambertington/dotfiles/blob/master/emacs.d/lambert-config.org#external-scripts).)
 
-By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item. 
+By default, this library can be invoked by executing `C-c C-e g` from within org-mode on a `TODO` list item.
 
 This extension supports both Jekyll posts using the `gh-pages` gem and `Pygments` extension, and exporting plain GitHub Flavored Markdown for creating project documentation.
 
@@ -23,13 +23,13 @@ When exporting as GitHub Flavored Markdown, the file will be named `title-of-pos
 
 ## A Visual Guide
 
-Let's say we have all of our blog posts as `TODO` items in an org file: 
+Let's say we have all of our blog posts as `TODO` items in an org file:
 ![img](https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs1.png)
 
 This has practical value, as we can get automatic reminders (using org-agenda) about writing and quickly refactor drafts:
 ![img](https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs2.png)
 
-Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog! 
+Once we're done, we export to GitHub Flavored Markdown for posting to our Jekyll blog!
 
 Access the org-mode export menu (by default, `C-c C-e`) and selecting the *Export to GitHub Flavored Markdown* section by hitting `g`. We can put this in a temp buffer by now hitting `J` (or, alternatively, directly call `M-x org-ghpages-export-as-jekyll`):
 ![img](https://raw.githubusercontent.com/lambertington/org-to-ghpages/master/images/emacs3.png)
@@ -45,9 +45,9 @@ Easy peasy.
 
 ## Sensible defaults
 
-By default, the only variable that needs to be set is `org-ghpages-post-dir` &#x2013; everything else will be automatically handled for you. 
+By default, the only variable that needs to be set is `org-ghpages-post-dir` &#x2013; everything else will be automatically handled for you.
 
-When exporting as Jekyll, YAML frontmatter will be prepended to the actual post data, and include `title`, `layout`, `date`, `comments`, `categories`, and `permalink` attributes. The `date` data is acquired from your org-agenda scheduled date. Further, Pygments-style source hightlighting will be generated, using the lang specified from your org-mode `#+BEGIN_SRC` blocks. 
+When exporting as Jekyll, YAML frontmatter will be prepended to the actual post data, and include `title`, `layout`, `date`, `comments`, `categories`, and `permalink` attributes. The `date` data is acquired from your org-agenda scheduled date. Further, Pygments-style source hightlighting will be generated, using the lang specified from your org-mode `#+BEGIN_SRC` blocks.
 
 When exporting as GitHub Flavored Markdown, merely the post itself will be exported, using the appropriate triple-backtick source hightlighting scheme. Again, the lang will be specified from your org-mode `#+BEGIN_SRC` blocks.
 
@@ -82,7 +82,7 @@ generating YAML front matter."
 
 ```common-lisp
 (defcustom org-ghpages-comments t
-  "Include Disqus comments by default. Used when 
+  "Include Disqus comments by default. Used when
 generating YAML front matter."
   :group 'org-export-ghpages
   :type 'boolean)
@@ -122,7 +122,7 @@ redcarpet:
 
 ## License
 
-Copyright (C) 2015 Paul Lambert
+Copyright (C) 2020 Paul Lambert
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
